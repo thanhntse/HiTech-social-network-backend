@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a social networking. The frontend is built using Vite with React, TypeScript, and styled using TailwindCSS, while the backend is powered by ASP.NET Core.
+This project is a social networking. The frontend is built using ViteJS with ReactJS, TypeScript, and styled using TailwindCSS, while the backend is powered by ASP.NET Core.
 
 ## Features
 
