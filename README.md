@@ -54,8 +54,7 @@ This project is a social networking. The frontend is built using ViteJS with Rea
 Ensure you have the following installed:
 - Node.js (>=14.x)
 - npm (>=6.x) or yarn (>=1.x)
-- Java (>=11)
-- Maven (>=3.6.3)
+- .NET SDK (>=5.0)
 
 ### Installation
 
