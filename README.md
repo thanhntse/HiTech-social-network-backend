@@ -88,7 +88,7 @@ HiTech-social-network/
 │   ├── Models/
 │   ├── Program.cs
 │   └── ...
-└── platform-frontend/             # React frontend code
+└── hitech-frontend/             # React frontend code
     ├── src/
     ├── public/
     ├── package.json
