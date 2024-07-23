@@ -4,8 +4,8 @@ networks:
   backend: 
 
 services:
-  userdb:
-    container_name: user-db
+  hitechdb:
+    container_name: hitech-db
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - ACCEPT_EULA=Y
@@ -25,6 +25,22 @@ services:
     ports:
       - 8002:8080
     environment:
-      - DB_HOST=userdb
+      - DB_HOST=hitechdb
       - DB_NAME=user
       - DB_SA_PASSWORD=password@12345# 
+
+  blogwebapi:
+    container_name: blog-api
+    image: ${DOCKER_REGISTRY-}blogwebapi
+    build:
+      context: .
+      dockerfile: BlogWebAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:8080
+    environment:
+      - DB_HOST=hitechdb
+      - DB_NAME=blog
+      - DB_SA_PASSWORD=password@12345#
+
