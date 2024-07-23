@@ -7,7 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserWebAPI", "UserWebAPI\UserWebAPI.csproj", "{008DC2EE-019D-4055-9A22-A8D6D8E04A3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogWebAPI", "BlogWebAPI\BlogWebAPI.csproj", "{FDE11135-CD36-47ED-AD1A-5D354AAED6ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogWebAPI", "BlogWebAPI\BlogWebAPI.csproj", "{FDE11135-CD36-47ED-AD1A-5D354AAED6ED}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6B702623-C1ED-42BD-B269-AAC5875B1AC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{FDE11135-CD36-47ED-AD1A-5D354AAED6ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDE11135-CD36-47ED-AD1A-5D354AAED6ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDE11135-CD36-47ED-AD1A-5D354AAED6ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B702623-C1ED-42BD-B269-AAC5875B1AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B702623-C1ED-42BD-B269-AAC5875B1AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B702623-C1ED-42BD-B269-AAC5875B1AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B702623-C1ED-42BD-B269-AAC5875B1AC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
