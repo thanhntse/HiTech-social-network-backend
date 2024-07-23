@@ -1,0 +1,30 @@
+version: '3.4'
+
+networks:
+  backend: 
+
+services:
+  userdb:
+    container_name: user-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - backend
+    ports:
+      - 8001:1433
+  userwebapi:
+    container_name: user-api
+    image: ${DOCKER_REGISTRY-}userwebapi
+    build:
+      context: .
+      dockerfile: UserWebAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:8080
+    environment:
+      - DB_HOST=userdb
+      - DB_NAME=user
+      - DB_SA_PASSWORD=password@12345# 
