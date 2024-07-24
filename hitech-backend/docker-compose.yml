@@ -38,7 +38,7 @@ services:
     networks:
       - backend
     ports:
-      - 8002:8080
+      - 8003:8080
     environment:
       - DB_HOST=hitechdb
       - DB_NAME=blog

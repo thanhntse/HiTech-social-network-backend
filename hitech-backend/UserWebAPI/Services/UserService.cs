@@ -43,7 +43,7 @@ namespace UserWebAPI.Services
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Address = request.Address,
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = DateTime.Now,
                 Password = request.Password,
                 Phone = request.Phone,
                 Role = "Member",

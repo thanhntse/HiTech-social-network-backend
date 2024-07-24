@@ -1,5 +1,5 @@
-create database dbUser
-use dbUser
+create database user
+use user
 
 CREATE TABLE [dbo].[user] (
     [user_id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
