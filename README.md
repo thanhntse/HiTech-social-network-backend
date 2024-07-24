@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a social networking. The frontend is built using ViteJS with ReactJS, TypeScript, and styled using TailwindCSS, while the backend is powered by ASP.NET Core.
+HiTech Social Network is a social networking platform. The frontend is built using ViteJS with ReactJS, TypeScript, and styled using TailwindCSS, while the backend is powered by ASP.NET Core with a microservices architecture and Docker for containerization.
 
 ## Features
 
@@ -34,7 +34,6 @@ This project is a social networking. The frontend is built using ViteJS with Rea
    - Send friend requests and follow other users.
    - Display friends and followers lists.
 
-
 ## Tech Stack
 
 **Frontend:**
@@ -43,9 +42,12 @@ This project is a social networking. The frontend is built using ViteJS with Rea
 - [TypeScript](https://www.typescriptlang.org/)
 - [SWC](https://swc.rs/)
 - [TailwindCSS](https://tailwindcss.com/)
+- [Material UI](https://mui.com/core/)
 
 **Backend:**
 - [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
+- Microservices architecture
+- Docker for containerization
 
 ## Getting Started
 
@@ -55,6 +57,7 @@ Ensure you have the following installed:
 - Node.js (>=14.x)
 - npm (>=6.x) or yarn (>=1.x)
 - .NET SDK (>=5.0)
+- Docker
 
 ### Installation
 
@@ -64,10 +67,10 @@ Ensure you have the following installed:
     cd HiTech-social-network
     ```
 
-2. **Backend Setup:**
+2. **Backend Setup with Docker:**
     ```sh
     cd hitech-backend
-    dotnet run
+    docker-compose up
     ```
 
 3. **Frontend Setup:**
@@ -77,18 +80,16 @@ Ensure you have the following installed:
     npm run dev
     ```
 
-The frontend application will be available at `http://localhost:3000` and the backend at `http://localhost:5000`.
-
 ## Project Structure
 
 ```plaintext
 HiTech-social-network/
 ├── hitech-backend/                # ASP.NET Core backend code
-│   ├── Controllers/
-│   ├── Models/
-│   ├── Program.cs
+│   ├── Services/                  # Microservices
+│   ├── Dockerfile                 # Docker configuration
+│   ├── docker-compose.yml         # Docker Compose file
 │   └── ...
-└── hitech-frontend/             # React frontend code
+└── hitech-frontend/               # React frontend code
     ├── src/
     ├── public/
     ├── package.json
