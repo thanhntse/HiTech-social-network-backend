@@ -1,74 +1,75 @@
-﻿using System.Data;
+﻿using AutoMapper;
+using System.Data;
 using System.Net;
 using System.Numerics;
 using UserWebAPI.DAL;
 using UserWebAPI.DTO.Request;
+using UserWebAPI.DTO.Response;
 using UserWebAPI.Entities;
 using UserWebAPI.Repositories;
+using UserWebAPI.Util;
 
 namespace UserWebAPI.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserResponse>> GetAllUsersAsync()
         {
             var users = await _userRepository.GetAllAsync();
-
-            return users;
+            var userResponses = _mapper.Map<IEnumerable<UserResponse>>(users);
+            return userResponses;
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<UserResponse> GetUserByIdAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
                 return null;
             }
+            var userResponse = _mapper.Map<UserResponse>(user);
 
-            return user;
+            return userResponse;
         }
 
-        public async Task<User> CreateUserAsync(UserRequest request)
+        public async Task<UserResponse> CreateUserAsync(UserRequest request)
         {
-            var user = new User
-            {
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Address = request.Address,
-                CreatedDate = DateTime.Now,
-                Password = request.Password,
-                Phone = request.Phone,
-                Role = "Member",
-            };
+            var user = _mapper.Map<User>(request);
+            user.CreatedDate = DateTime.Now;
+            user.Role = "Member";
+            user.Password = PasswordEncoder.Encode(request.Password);
 
             await _userRepository.AddAsync(user);
 
-            return user;
+            var userResponse = _mapper.Map<UserResponse>(user);
+
+            return userResponse;
         }
 
-        public async Task<User> UpdateUserAsync(int id, UserRequest request)
+        public async Task<UserResponse> UpdateUserAsync(int id, UserRequest request)
         {
             var user = await _userRepository.GetByIdAsync(id);
-            if (user != null)
+            if (user == null)
             {
-                user.Email = request.Email;
-                user.FirstName = request.FirstName;
-                user.LastName = request.LastName;
-                user.Address = request.Address;
-                user.Password = request.Password;
-                user.Phone = request.Phone;
-
-                await _userRepository.UpdateAsync(user);
+                return null;
             }
-            return user ?? new User();
+            _mapper.Map(request, user);
+            user.Password = PasswordEncoder.Encode(request.Password);
+
+            await _userRepository.UpdateAsync(user);
+
+            var userResponse = _mapper.Map<UserResponse>(user);
+
+            return userResponse;
         }
 
         public async Task DeleteUserAsync(int id)
