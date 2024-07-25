@@ -2,6 +2,7 @@ using BlogWebAPI.DAL;
 using BlogWebAPI.Repositories;
 using BlogWebAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using UserWebAPI.Mapper;
 
 namespace BlogWebAPI
 {
@@ -23,6 +24,7 @@ namespace BlogWebAPI
             builder.Services.AddDbContext<BlogDbContext>(opt => opt.UseSqlServer(GetConnectionString()));
 
             // Add services to the container.
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
             builder.Services.AddScoped<IBlogRepository, BlogRepository>();
             builder.Services.AddScoped<IBlogService, BlogService>();

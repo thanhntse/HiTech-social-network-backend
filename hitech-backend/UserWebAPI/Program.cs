@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UserWebAPI.DAL;
+using UserWebAPI.Mapper;
 using UserWebAPI.Repositories;
 using UserWebAPI.Services;
 
@@ -23,7 +24,7 @@ namespace UserWebAPI
             builder.Services.AddDbContext<UserDbContext>(opt => opt.UseSqlServer(GetConnectionString()));
 
             // Add services to the container.
-
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddControllers();

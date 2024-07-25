@@ -1,14 +1,14 @@
 ﻿using UserWebAPI.DTO.Request;
-using UserWebAPI.Entities;
+using UserWebAPI.DTO.Response;
 
 namespace UserWebAPI.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> CreateUserAsync(UserRequest request);
-        Task<User> UpdateUserAsync(int id, UserRequest request);
+        Task<IEnumerable<UserResponse>> GetAllUsersAsync();
+        Task<UserResponse> GetUserByIdAsync(int id);
+        Task<UserResponse> CreateUserAsync(UserRequest request);
+        Task<UserResponse> UpdateUserAsync(int id, UserRequest request);
         Task DeleteUserAsync(int id);
     }
 }
