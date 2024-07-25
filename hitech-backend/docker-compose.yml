@@ -2,7 +2,7 @@ version: '3.4'
 
 networks:
   backend: 
-
+  
 services:
   hitechdb:
     container_name: hitech-db
@@ -14,12 +14,13 @@ services:
       - backend
     ports:
       - 8001:1433
-  userwebapi:
+
+  api.user:
     container_name: user-api
-    image: ${DOCKER_REGISTRY-}userwebapi
+    image: ${DOCKER_REGISTRY-}apiuser
     build:
       context: .
-      dockerfile: UserWebAPI/Dockerfile
+      dockerfile: Microservices/API.User/Dockerfile
     networks:
       - backend
     ports:
@@ -29,12 +30,12 @@ services:
       - DB_NAME=user
       - DB_SA_PASSWORD=password@12345# 
 
-  blogwebapi:
+  api.blog:
     container_name: blog-api
-    image: ${DOCKER_REGISTRY-}blogwebapi
+    image: ${DOCKER_REGISTRY-}apiblog
     build:
       context: .
-      dockerfile: BlogWebAPI/Dockerfile
+      dockerfile: Microservices/API.Blog/Dockerfile
     networks:
       - backend
     ports:
