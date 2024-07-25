@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using API.User.DAL;
 using API.User.Mapper;
 using API.User.Repositories;
 using API.User.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.User
 {

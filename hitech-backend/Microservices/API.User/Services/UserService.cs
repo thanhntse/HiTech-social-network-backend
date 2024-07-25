@@ -72,13 +72,16 @@ namespace API.User.Services
             return userResponse;
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
+            bool result = false;
             var user = await _userRepository.GetByIdAsync(id);
             if (user != null)
             {
                 await _userRepository.DeleteAsync(user);
+                result = true;
             }
+            return result;
         }
     }
 }

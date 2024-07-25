@@ -9,6 +9,6 @@ namespace API.User.Services
         Task<UserResponse> GetUserByIdAsync(int id);
         Task<UserResponse> CreateUserAsync(UserRequest request);
         Task<UserResponse> UpdateUserAsync(int id, UserRequest request);
-        Task DeleteUserAsync(int id);
+        Task<bool> DeleteUserAsync(int id);
     }
 }

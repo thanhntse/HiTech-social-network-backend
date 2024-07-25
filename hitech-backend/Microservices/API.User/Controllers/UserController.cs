@@ -1,5 +1,6 @@
 ﻿using API.User.DAL;
 using API.User.DTO.Request;
+using API.User.DTO.Response;
 using API.User.Entities;
 using API.User.Services;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace API.User.Controllers
 
         // GET: api/user
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Entities.User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
@@ -28,7 +29,7 @@ namespace API.User.Controllers
 
         // GET: api/user/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Entities.User>> GetUser(int id)
+        public async Task<ActionResult<UserResponse>> GetUser(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
 
@@ -42,7 +43,7 @@ namespace API.User.Controllers
 
         // POST: api/user
         [HttpPost]
-        public async Task<ActionResult<Entities.User>> Create([FromBody] UserRequest request)
+        public async Task<ActionResult<UserResponse>> Create([FromBody] UserRequest request)
         {
             if (request == null)
             {
@@ -56,7 +57,7 @@ namespace API.User.Controllers
 
         // PUT: api/user/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Entities.User>> Update(int id, [FromBody] UserRequest request)
+        public async Task<ActionResult<UserResponse>> Update(int id, [FromBody] UserRequest request)
         {
             if (request == null)
             {
@@ -77,7 +78,7 @@ namespace API.User.Controllers
 
         // DELETE: api/user/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<ActionResult<bool>> DeleteUser(int id)
         {
             var userToDelete = await _userService.GetUserByIdAsync(id);
 
@@ -86,9 +87,7 @@ namespace API.User.Controllers
                 return NotFound();
             }
 
-            await _userService.DeleteUserAsync(id);
-
-            return Ok();
+            return Ok(await _userService.DeleteUserAsync(id));
         }
     }
 }

@@ -4,6 +4,17 @@ networks:
   backend: 
   
 services:
+  yarp:
+    container_name: yarp
+    image: ${DOCKER_REGISTRY-}yarp
+    build:
+      context: .
+      dockerfile: Gateway/Yarp/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8000:8080
+
   hitechdb:
     container_name: hitech-db
     image: mcr.microsoft.com/mssql/server:2019-latest
