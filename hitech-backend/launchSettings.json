@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "api.user": "StartDebugging",
-        "api.blog": "StartDebugging"
+        "api.blog": "StartDebugging",
+        "yarp": "StartDebugging"
       }
     }
   }
