@@ -1,14 +1,15 @@
 ﻿using API.Blog.DTO.Request;
+using API.Blog.DTO.Response;
 using API.Blog.Entities;
 
 namespace API.Blog.Services
 {
     public interface IBlogService
     {
-        Task<IEnumerable<Entities.Blog>> GetAllBlogsAsync();
-        Task<Entities.Blog> GetBlogByIdAsync(int id);
-        Task<Entities.Blog> CreateBlogAsync(BlogRequest request);
-        Task<Entities.Blog> UpdateBlogAsync(int id, BlogRequest request);
-        Task DeleteBlogAsync(int id);
+        Task<IEnumerable<BlogResponse>> GetAllBlogsAsync();
+        Task<BlogResponse> GetBlogByIdAsync(int id);
+        Task<BlogResponse> CreateBlogAsync(BlogRequest request);
+        Task<BlogResponse> UpdateBlogAsync(int id, BlogRequest request);
+        Task<bool> DeleteBlogAsync(int id);
     }
 }

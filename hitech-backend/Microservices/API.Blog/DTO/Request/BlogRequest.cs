@@ -7,6 +7,6 @@ namespace API.Blog.DTO.Request
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public int AuthorId { get; set; }
-        public List<string> Tags { get; set; } = null!;
+        public List<int> TagIds { get; set; } = null!;
     }
 }

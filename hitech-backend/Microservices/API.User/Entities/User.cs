@@ -30,10 +30,10 @@ namespace API.User.Entities
         public string Address { get; set; } = string.Empty;
 
         [Column("created_date")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Column("role")]
-        public string Role { get; set; } = string.Empty;
+        public string Role { get; set; } = "Member";
 
         [Column("is_deleted")]
         public bool IsDeleted { get; set; } = false;

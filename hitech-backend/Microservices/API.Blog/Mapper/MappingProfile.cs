@@ -13,6 +13,8 @@ namespace API.Blog.Mapper
 
             CreateMap<CommentRequest, Comment>();
             CreateMap<Comment, CommentResponse>();
+
+            CreateMap<Tag, TagResponse>();
         }
     }
 }
