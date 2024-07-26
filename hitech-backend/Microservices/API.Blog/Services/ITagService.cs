@@ -1,10 +1,11 @@
-﻿using API.Blog.Entities;
+﻿using API.Blog.DTO.Response;
+using API.Blog.Entities;
 
 namespace API.Blog.Services
 {
     public interface ITagService
     {
-        Task<IEnumerable<Tag>> GetAllTagsAsync();
-        Task<Tag> GetTagByIdAsync(int id);
+        Task<IEnumerable<TagResponse>> GetAllTagsAsync();
+        Task<TagResponse> GetTagByIdAsync(int id);
     }
 }

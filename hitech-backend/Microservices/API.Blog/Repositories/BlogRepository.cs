@@ -29,6 +29,13 @@ namespace API.Blog.Repositories
             return await _context.Blogs.ToListAsync();
         }
 
+        public async Task<IEnumerable<Entities.Blog>> GetAllByAuthorIdAsync(int authorId)
+        {
+            return await _context.Blogs
+                .Where(b => b.AuthorId == authorId)
+                .ToListAsync();
+        }
+
         public async Task<Entities.Blog> GetByIdAsync(int id)
         {
             return await _context.Blogs.FindAsync(id);
