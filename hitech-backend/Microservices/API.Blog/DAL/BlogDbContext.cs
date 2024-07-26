@@ -28,5 +28,26 @@ namespace API.Blog.DAL
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<BlogTag> BlogTags { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Blog)
+                .WithMany(b => b.Comments)
+                .HasForeignKey(c => c.BlogId);
+
+            modelBuilder.Entity<BlogTag>()
+                .HasKey(bt => new { bt.BlogId, bt.TagId });
+
+            modelBuilder.Entity<BlogTag>()
+                .HasOne(bt => bt.Blog)
+                .WithMany(b => b.BlogTags)
+                .HasForeignKey(bt => bt.BlogId);
+
+            modelBuilder.Entity<BlogTag>()
+                .HasOne(bt => bt.Tag)
+                .WithMany(t => t.BlogTags)
+                .HasForeignKey(bt => bt.TagId);
+        }
     }
 }

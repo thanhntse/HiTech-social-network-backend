@@ -26,6 +26,7 @@ namespace API.Blog
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
+            builder.Services.AddScoped<IBlogTagRepository, BlogTagRepository>();
             builder.Services.AddScoped<IBlogRepository, BlogRepository>();
             builder.Services.AddScoped<IBlogService, BlogService>();
 

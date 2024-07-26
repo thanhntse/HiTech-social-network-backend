@@ -15,7 +15,6 @@ namespace API.Blog.DTO.Response
         public int CommentsCount { get; set; } = 0;
         public int AuthorId { get; set; }
         public bool IsDeleted { get; set; }
-        public ICollection<BlogTag> BlogTags { get; set; } = new List<BlogTag>();
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<TagResponse> Tags { get; set; } = new List<TagResponse>();
     }
 }

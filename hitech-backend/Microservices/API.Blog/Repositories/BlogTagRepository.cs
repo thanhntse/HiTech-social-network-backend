@@ -1,32 +1,45 @@
-﻿using API.Blog.Entities;
+﻿using API.Blog.DAL;
+using API.Blog.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Blog.Repositories
 {
     public class BlogTagRepository : IBlogTagRepository
     {
-        public Task AddAsync(BlogTag blogTag)
+        private readonly BlogDbContext _context;
+        public BlogTagRepository(BlogDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task DeleteAsync(BlogTag blogTag)
+        public async Task AddAsync(BlogTag blogTag)
         {
-            throw new NotImplementedException();
+            await _context.BlogTags.AddAsync(blogTag);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<BlogTag>> GetAllByBlogIdAsync(int blogId)
+        public async Task DeleteAsync(BlogTag blogTag)
         {
-            throw new NotImplementedException();
+            _context.BlogTags.Remove(blogTag);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<BlogTag>> GetAllByTagIdAsync(int tagId)
+        public async Task<IEnumerable<BlogTag>> GetAllByBlogIdAsync(int blogId)
         {
-            throw new NotImplementedException();
+            return await _context.BlogTags.Where(bt => bt.BlogId == blogId)
+                .ToListAsync();
         }
 
-        public Task UpdateAsync(BlogTag blogTag)
+        public async Task<IEnumerable<BlogTag>> GetAllByTagIdAsync(int tagId)
         {
-            throw new NotImplementedException();
+            return await _context.BlogTags.Where(bt => bt.TagId == tagId)
+                .ToListAsync();
+        }
+
+        public async Task UpdateAsync(BlogTag blogTag)
+        {
+            _context.BlogTags.Update(blogTag);
+            await _context.SaveChangesAsync();
         }
     }
 }

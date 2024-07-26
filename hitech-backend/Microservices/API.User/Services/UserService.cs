@@ -44,8 +44,6 @@ namespace API.User.Services
         public async Task<UserResponse> CreateUserAsync(UserRequest request)
         {
             var user = _mapper.Map<Entities.User>(request);
-            user.CreatedDate = DateTime.Now;
-            user.Role = "Member";
             user.Password = PasswordEncoder.Encode(request.Password);
 
             await _userRepository.AddAsync(user);
