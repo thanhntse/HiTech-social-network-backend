@@ -6,7 +6,10 @@
       "serviceActions": {
         "api.user": "StartDebugging",
         "api.blog": "StartDebugging",
-        "yarp": "StartDebugging"
+        "yarp": "StartDebugging",
+        "api.notification": "StartDebugging",
+        "api.chat": "StartDebugging",
+        "api.friend": "StartDebugging"
       }
     }
   }
