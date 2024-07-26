@@ -24,18 +24,6 @@ namespace API.Blog.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<BlogTag>> GetAllByBlogIdAsync(int blogId)
-        {
-            return await _context.BlogTags.Where(bt => bt.BlogId == blogId)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<BlogTag>> GetAllByTagIdAsync(int tagId)
-        {
-            return await _context.BlogTags.Where(bt => bt.TagId == tagId)
-                .ToListAsync();
-        }
-
         public async Task UpdateAsync(BlogTag blogTag)
         {
             _context.BlogTags.Update(blogTag);

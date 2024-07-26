@@ -3,6 +3,7 @@ using API.Blog.DTO.Response;
 using API.Blog.Entities;
 using API.Blog.Repositories;
 using AutoMapper;
+using System.Reflection.Metadata;
 
 namespace API.Blog.Services
 {
@@ -10,13 +11,24 @@ namespace API.Blog.Services
     {
         private readonly IBlogRepository _blogRepository;
         private readonly IBlogTagRepository _blogTagRepository;
+        private readonly ITagRepository _tagRepository;
         private readonly IMapper _mapper;
 
-        public BlogService(IBlogRepository blogRepository, IBlogTagRepository blogTagRepository, IMapper mapper)
+        public BlogService(IBlogRepository blogRepository, IBlogTagRepository blogTagRepository,
+            ITagRepository tagRepository, IMapper mapper)
         {
-            _blogRepository = blogRepository;
             _mapper = mapper;
+            _blogRepository = blogRepository;
             _blogTagRepository = blogTagRepository;
+            _tagRepository = tagRepository;
+        }
+
+        private ICollection<TagResponse> GetTagResponseList(int BlogId)
+        {
+            var tags = _tagRepository.GetAllByBlogIdAsync(BlogId);
+            var tagResponses = _mapper.Map<ICollection<TagResponse>>(tags);
+
+            return tagResponses;
         }
 
         public async Task<BlogResponse> CreateBlogAsync(BlogRequest request)
@@ -36,9 +48,7 @@ namespace API.Blog.Services
                     }
                 );
             var blogResponse = _mapper.Map<BlogResponse>(blog);
-            var tagResponses = new List<TagResponse>();
-
-            blogResponse.Tags = tagResponses;
+            blogResponse.Tags = GetTagResponseList(blog.BlogId);
 
             return blogResponse;
         }
@@ -59,6 +69,25 @@ namespace API.Blog.Services
         {
             var blogs = await _blogRepository.GetAllAsync();
             var blogResponses = _mapper.Map<IEnumerable<BlogResponse>>(blogs);
+
+            foreach (var item in blogResponses)
+            {
+                item.Tags = GetTagResponseList(item.BlogId);
+            }
+
+            return blogResponses;
+        }
+
+        public async Task<IEnumerable<BlogResponse>> GetAllBlogsByAuthorIdAsync(int authorId)
+        {
+            var blogs = await _blogRepository.GetAllByAuthorIdAsync(authorId);
+            var blogResponses = _mapper.Map<IEnumerable<BlogResponse>>(blogs);
+
+            foreach (var item in blogResponses)
+            {
+                item.Tags = GetTagResponseList(item.BlogId);
+            }
+
             return blogResponses;
         }
 
@@ -70,6 +99,7 @@ namespace API.Blog.Services
                 return null;
             }
             var blogResponse = _mapper.Map<BlogResponse>(blog);
+            blogResponse.Tags = GetTagResponseList(id);
             return blogResponse;
         }
 
@@ -81,8 +111,11 @@ namespace API.Blog.Services
                 return null;
             }
             _mapper.Map(request, blog);
+            blog.UpdateAt = DateTime.UtcNow;
             await _blogRepository.UpdateAsync(blog);
             var blogResponse = _mapper.Map<BlogResponse>(blog);
+            blogResponse.Tags = GetTagResponseList(id);
+
             return blogResponse;
         }
     }
