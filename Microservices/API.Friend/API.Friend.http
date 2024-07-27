@@ -1,0 +1,6 @@
+@API.Friend_HostAddress = http://localhost:5099
+
+GET {{API.Friend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

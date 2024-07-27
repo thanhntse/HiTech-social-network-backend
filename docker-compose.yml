@@ -1,0 +1,106 @@
+version: '3.4'
+
+networks:
+  backend: 
+  
+services:
+  yarp:
+    container_name: yarp
+    image: ${DOCKER_REGISTRY-}yarp
+    build:
+      context: .
+      dockerfile: Gateway/Yarp/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8000:8080
+
+  hitechdb:
+    container_name: hitech-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - backend
+    ports:
+      - 8001:1433
+
+  api.user:
+    container_name: user-api
+    image: ${DOCKER_REGISTRY-}apiuser
+    build:
+      context: .
+      dockerfile: Microservices/API.User/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:8080
+    environment:
+      - DB_HOST=hitechdb
+      - DB_NAME=user
+      - DB_SA_PASSWORD=password@12345# 
+
+  api.blog:
+    container_name: blog-api
+    image: ${DOCKER_REGISTRY-}apiblog
+    build:
+      context: .
+      dockerfile: Microservices/API.Blog/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8003:8080
+    environment:
+      - DB_HOST=hitechdb
+      - DB_NAME=blog
+      - DB_SA_PASSWORD=password@12345#
+
+
+  api.notification:
+    container_name: notification-api
+    image: ${DOCKER_REGISTRY-}apinotification
+    build:
+      context: .
+      dockerfile: Microservices/API.Notification/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8004:8080
+    environment:
+      - DB_HOST=hitechdb
+      - DB_NAME=notification
+      - DB_SA_PASSWORD=password@12345#
+
+
+  api.chat:
+    container_name: chat-api
+    image: ${DOCKER_REGISTRY-}apichat
+    build:
+      context: .
+      dockerfile: Microservices/API.Chat/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8005:8080
+    environment:
+      - DB_HOST=hitechdb
+      - DB_NAME=chat
+      - DB_SA_PASSWORD=password@12345#
+
+
+  api.friend:
+    container_name: friend-api
+    image: ${DOCKER_REGISTRY-}apifriend
+    build:
+      context: .
+      dockerfile: Microservices/API.Friend/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8006:8080
+    environment:
+      - DB_HOST=hitechdb
+      - DB_NAME=friend
+      - DB_SA_PASSWORD=password@12345#
+
