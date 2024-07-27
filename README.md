@@ -1,4 +1,6 @@
-# HiTech Social Network
+# HiTech Social Network Backend
+
+[![Tech stack](https://skillicons.dev/icons?i=cs,aspnetcore,netcore,docker)](https://skillicons.dev)
 
 ## Overview
 
@@ -36,14 +38,6 @@ HiTech Social Network is a social networking platform. The frontend is built usi
 
 ## Tech Stack
 
-**Frontend:**
-- [Vite](https://vitejs.dev/)
-- [React](https://reactjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [SWC](https://swc.rs/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [Material UI](https://mui.com/core/)
-
 **Backend:**
 - [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
 - Microservices architecture
@@ -54,8 +48,6 @@ HiTech Social Network is a social networking platform. The frontend is built usi
 ### Prerequisites
 
 Ensure you have the following installed:
-- Node.js (>=14.x)
-- npm (>=6.x) or yarn (>=1.x)
 - .NET SDK (>=5.0)
 - Docker
 
@@ -63,34 +55,11 @@ Ensure you have the following installed:
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/thanhntse/HiTech-social-network.git
-    cd HiTech-social-network
+    git clone https://github.com/thanhntse/HiTech-social-network-backend.git
     ```
 
 2. **Backend Setup with Docker:**
     ```sh
-    cd hitech-backend
+    cd HiTech-social-network-backend
     docker-compose up
     ```
-
-3. **Frontend Setup:**
-    ```sh
-    cd platform-frontend
-    npm install
-    npm run dev
-    ```
-
-## Project Structure
-
-```plaintext
-HiTech-social-network/
-├── hitech-backend/                # ASP.NET Core backend code
-│   ├── Services/                  # Microservices
-│   ├── Dockerfile                 # Docker configuration
-│   ├── docker-compose.yml         # Docker Compose file
-│   └── ...
-└── hitech-frontend/               # React frontend code
-    ├── src/
-    ├── public/
-    ├── package.json
-    └── ...
