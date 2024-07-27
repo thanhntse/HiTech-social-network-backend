@@ -1,6 +1,6 @@
 # HiTech Social Network Backend
 
-[![Tech stack](https://skillicons.dev/icons?i=cs,aspnetcore,netcore,docker)](https://skillicons.dev)
+[![Tech stack](https://skillicons.dev/icons?i=cs,dotnet,docker)](https://skillicons.dev)
 
 ## Overview
 
