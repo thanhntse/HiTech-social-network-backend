@@ -1,0 +1,6 @@
+@HiTech.Service.GroupAPI_HostAddress = http://localhost:5269
+
+GET {{HiTech.Service.GroupAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

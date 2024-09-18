@@ -1,0 +1,6 @@
+@HiTech.Yarp_HostAddress = http://localhost:5140
+
+GET {{HiTech.Yarp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
