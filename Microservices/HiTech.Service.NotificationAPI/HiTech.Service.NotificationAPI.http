@@ -1,0 +1,6 @@
+@HiTech.Service.NotificationAPI_HostAddress = http://localhost:5056
+
+GET {{HiTech.Service.NotificationAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
