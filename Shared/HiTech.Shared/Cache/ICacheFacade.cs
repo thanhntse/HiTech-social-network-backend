@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 
-namespace Dwt.Shared.Cache;
+namespace HiTech.Shared.Cache;
 
 /// <summary>
 /// Extends IDistributedCache functionality with typed methods.

@@ -1,4 +1,4 @@
-﻿namespace Dwt.Shared.Models;
+﻿namespace HiTech.Shared.Repositories;
 
 /// <summary>
 /// Generic interface for repositories.

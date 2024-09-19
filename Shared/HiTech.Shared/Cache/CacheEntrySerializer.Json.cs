@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Dwt.Shared.Cache;
+namespace HiTech.Shared.Cache;
 
 /// <summary>
 /// Options for the JsonCacheEntrySerializer.

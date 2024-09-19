@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System.IO.Compression;
 
-namespace Dwt.Shared.Cache;
+namespace HiTech.Shared.Cache;
 
 public class CacheFacadeOptions
 {

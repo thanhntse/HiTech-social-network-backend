@@ -1,11 +1,11 @@
-﻿using Dwt.Shared.Identity;
+﻿using HiTech.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
-namespace Dwt.Shared.EF.Identity;
+namespace HiTech.Shared.EF.Identity;
 
 public class IdentityDbContextRepository : IdentityDbContext<DwtUser, DwtRole, string>, IIdentityRepository
 {

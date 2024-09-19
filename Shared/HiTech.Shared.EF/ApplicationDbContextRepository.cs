@@ -1,11 +1,12 @@
-﻿using Dwt.Shared.Cache;
-using Dwt.Shared.Models;
+﻿using HiTech.Shared.Cache;
+using HiTech.Shared.Models;
+using HiTech.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
 
-namespace Dwt.Shared.EF;
+namespace HiTech.Shared.EF;
 public sealed class ApplicationDbContextRepository
 	: GenericDbContextRepository<ApplicationDbContextRepository, Application, string>, IApplicationRepository
 {

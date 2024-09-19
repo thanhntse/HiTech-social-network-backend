@@ -1,9 +1,9 @@
-﻿using Dwt.Shared.Identity;
+﻿using HiTech.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Dwt.Shared.EF.Identity;
+namespace HiTech.Shared.EF.Identity;
 
 /* Demostration of how to use the EntityTypeConfiguration classes to customize table and column names */
 

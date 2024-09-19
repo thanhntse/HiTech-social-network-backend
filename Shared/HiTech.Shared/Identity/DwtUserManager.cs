@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Dwt.Shared.Identity;
+namespace HiTech.Shared.Identity;
 public class DwtUserManager : UserManager<DwtUser>
 {
 	public DwtUserManager(

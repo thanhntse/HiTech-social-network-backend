@@ -1,7 +1,8 @@
-﻿using Dwt.Shared.Models;
+﻿using HiTech.Shared.Models;
+using HiTech.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dwt.Shared.EF;
+namespace HiTech.Shared.EF;
 
 /// <summary>
 /// (Sample) An abstract EF-implementation of IGenericRepository.

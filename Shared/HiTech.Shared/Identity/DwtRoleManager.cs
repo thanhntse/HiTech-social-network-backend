@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace Dwt.Shared.Identity;
+namespace HiTech.Shared.Identity;
 public class DwtRoleManager : RoleManager<DwtRole>
 {
 	public DwtRoleManager(

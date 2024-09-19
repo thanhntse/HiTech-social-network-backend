@@ -1,4 +1,4 @@
-﻿namespace Dwt.Shared.Models;
+﻿namespace HiTech.Shared.Models;
 public class Application
 {
 	public Application()
@@ -37,8 +37,4 @@ public class Application
 	/// Notifies that the data has changed, updating the <see cref="ConcurrencyStamp"/>.
 	/// </summary>
 	public void Touch() => ConcurrencyStamp = Guid.NewGuid().ToString();
-}
-
-public interface IApplicationRepository : IGenericRepository<Application, string>
-{
 }

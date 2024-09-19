@@ -1,4 +1,4 @@
-﻿namespace Dwt.Shared.EF;
+﻿namespace HiTech.Shared.EF;
 
 public sealed class Commons
 {

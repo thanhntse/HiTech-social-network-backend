@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Dwt.Shared.Identity;
+namespace HiTech.Shared.Identity;
 public class DwtRole : IdentityRole
 {
 	public const string ROLE_NAME_ADMIN = "Admin";

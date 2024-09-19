@@ -1,4 +1,4 @@
-﻿namespace Dwt.Shared.Cache;
+﻿namespace HiTech.Shared.Cache;
 
 /// <summary>
 /// API for serializing and deserializing cache entries.

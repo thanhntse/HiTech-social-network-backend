@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace Dwt.Shared.Identity;
+namespace HiTech.Shared.Identity;
 
 public class UserFetchOptions
 {
