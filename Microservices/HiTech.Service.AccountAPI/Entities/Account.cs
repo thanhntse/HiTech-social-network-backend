@@ -18,16 +18,16 @@ namespace HiTech.Service.AccountAPI.Entities
         public string Password { get; set; } = string.Empty;
 
         [Column("first_name")]
-        public string FirstName { get; set; } = string.Empty;
+        public string? FirstName { get; set; } = string.Empty;
 
         [Column("last_name")]
-        public string LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; } = string.Empty;
 
         [Column("phone")]
-        public string Phone { get; set; } = string.Empty;
+        public string? Phone { get; set; } = string.Empty;
 
         [Column("address")]
-        public string Address { get; set; } = string.Empty;
+        public string? Address { get; set; } = string.Empty;
 
         [Column("created_date")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;

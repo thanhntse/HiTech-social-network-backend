@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 
-namespace HiTech.Service.AccountAPI.Util
+namespace HiTech.Service.AccountAPI.Utils
 {
     public static class PasswordEncoder
     {
