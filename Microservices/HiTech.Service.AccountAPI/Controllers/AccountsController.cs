@@ -91,8 +91,8 @@ namespace HiTech.Service.AccountAPI.Controllers
                 return BadRequest(response);
             }
 
-            response = HiTechApi.Response(201, "Created", account);
-            return CreatedAtAction("GetAccount", response);
+            response = HiTechApi.Response(201, "Created.", account);
+            return CreatedAtAction("GetAccount", new { id = response?.Data?.AccountId }, response);
         }
 
         // DELETE: api/hitech/accounts/5

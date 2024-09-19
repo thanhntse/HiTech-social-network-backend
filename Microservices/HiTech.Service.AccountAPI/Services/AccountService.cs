@@ -60,10 +60,12 @@ namespace HiTech.Service.AccountAPI.Services
             return result;
         }
 
-        public IAsyncEnumerable<AccountResponse> GetAllAsync()
+        public async IAsyncEnumerable<AccountResponse> GetAllAsync()
         {
-            var accounts = _accountRepository.GetAllAsync();
-            return _mapper.Map<IAsyncEnumerable<AccountResponse>>(accounts);
+            await foreach (var account in _accountRepository.GetAllAsync())
+            {
+                yield return _mapper.Map<AccountResponse>(account);
+            }
         }
 
         public async Task<AccountResponse?> GetByIDAsync(int id)
