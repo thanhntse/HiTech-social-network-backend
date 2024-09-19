@@ -13,7 +13,7 @@ namespace HiTech.Service.AccountAPI.Repositories
     public sealed class AccountRepository
         : GenericDbContextRepository<AccountDbContext, Account, int>, IAccountRepository
     {
-        public AccountRepository(DbContextOptions<AccountDbContext> options) : base(options)
+        public AccountRepository(AccountDbContext context) : base(context)
         {
         }
     }
