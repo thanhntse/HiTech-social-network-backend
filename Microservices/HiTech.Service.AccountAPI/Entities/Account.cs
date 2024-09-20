@@ -12,22 +12,22 @@ namespace HiTech.Service.AccountAPI.Entities
         public int AccountId { get; set; }
 
         [Column("email")]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = null!;
 
         [Column("password")]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; } = null!;
 
         [Column("first_name")]
-        public string? FirstName { get; set; } = string.Empty;
+        public string? FirstName { get; set; } = null!;
 
         [Column("last_name")]
-        public string? LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; } = null!;
 
         [Column("phone")]
-        public string? Phone { get; set; } = string.Empty;
+        public string? Phone { get; set; } = null!;
 
         [Column("address")]
-        public string? Address { get; set; } = string.Empty;
+        public string? Address { get; set; } = null!;
 
         [Column("created_date")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;

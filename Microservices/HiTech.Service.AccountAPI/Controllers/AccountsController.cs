@@ -17,7 +17,7 @@ using Azure.Core;
 
 namespace HiTech.Service.AccountAPI.Controllers
 {
-    [Route("api/hitech/[controller]")]
+    [Route("api/hitech/account")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -28,7 +28,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             _accountService = accountService;
         }
 
-        // GET: api/hitech/accounts
+        // GET: api/hitech/account
         [HttpGet]
         public ActionResult<ApiResponse<IAsyncEnumerable<AccountResponse>>> GetAccounts()
         {
@@ -37,7 +37,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             return Ok(response);
         }
 
-        // GET: api/hitech/accounts/5
+        // GET: api/hitech/account/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<AccountResponse>>> GetAccount(int id)
         {
@@ -50,7 +50,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             return account != null ? Ok(response) : NotFound(response);
         }
 
-        // PUT: api/hitech/accounts/5
+        // PUT: api/hitech/account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<object>>> PutAccount(int id, AccountRequest request)
@@ -72,7 +72,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             return BadRequest(response);
         }
 
-        // POST: api/hitech/accounts
+        // POST: api/hitech/account
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<ApiResponse<AccountResponse>>> PostAccount(AccountRequest request)
@@ -95,7 +95,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             return CreatedAtAction("GetAccount", new { id = response?.Data?.AccountId }, response);
         }
 
-        // DELETE: api/hitech/accounts/5
+        // DELETE: api/hitech/account/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<object>>> DeleteAccount(int id)
         {
