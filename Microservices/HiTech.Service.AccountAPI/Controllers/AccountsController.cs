@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HiTech.Service.AccountAPI.Data;
-using HiTech.Service.AccountAPI.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using HiTech.Service.AccountAPI.Services;
 using HiTech.Service.AccountAPI.DTOs.Response;
-using Microsoft.AspNetCore.Http.HttpResults;
 using HiTech.Shared.Controllers;
-using Azure;
 using HiTech.Service.AccountAPI.DTOs.Request;
-using Azure.Core;
 
 namespace HiTech.Service.AccountAPI.Controllers
 {
@@ -45,7 +34,7 @@ namespace HiTech.Service.AccountAPI.Controllers
 
             var response = account != null
                 ? HiTechApi.ResponseOk(account)
-                : HiTechApi.ResponseNotFound<AccountResponse>();
+                : HiTechApi.ResponseNotFound();
 
             return account != null ? Ok(response) : NotFound(response);
         }
@@ -53,9 +42,9 @@ namespace HiTech.Service.AccountAPI.Controllers
         // PUT: api/hitech/account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<object>>> PutAccount(int id, AccountRequest request)
+        public async Task<ActionResult<ApiResponse>> PutAccount(int id, AccountRequest request)
         {
-            var response = HiTechApi.ResponseNotFound<object>();
+            var response = HiTechApi.ResponseNotFound();
 
             if (!await _accountService.AccountExists(id))
             {
@@ -68,7 +57,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             {
                 return NoContent();
             }
-            response = HiTechApi.ResponseBadRequest<object>();
+            response = HiTechApi.ResponseBadRequest();
             return BadRequest(response);
         }
 
@@ -77,7 +66,7 @@ namespace HiTech.Service.AccountAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<AccountResponse>>> PostAccount(AccountRequest request)
         {
-            var response = HiTechApi.ResponseConflict<AccountResponse>();
+            var response = HiTechApi.ResponseConflict();
             if (await _accountService.AccountExists(request.Email))
             {
                 return Conflict(response);
@@ -87,19 +76,20 @@ namespace HiTech.Service.AccountAPI.Controllers
 
             if (account == null)
             {
-                response = HiTechApi.ResponseBadRequest<AccountResponse>();
+                response = HiTechApi.ResponseBadRequest();
                 return BadRequest(response);
             }
 
             response = HiTechApi.Response(201, "Created.", account);
-            return CreatedAtAction("GetAccount", new { id = response?.Data?.AccountId }, response);
+            return CreatedAtAction("GetAccount", 
+                new { id = ((ApiResponse<AccountResponse>)response)?.Data?.AccountId }, response);
         }
 
         // DELETE: api/hitech/account/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse<object>>> DeleteAccount(int id)
+        public async Task<ActionResult<ApiResponse>> DeleteAccount(int id)
         {
-            var response = HiTechApi.ResponseNotFound<object>();
+            var response = HiTechApi.ResponseNotFound();
 
             if (!await _accountService.AccountExists(id))
             {
@@ -111,7 +101,7 @@ namespace HiTech.Service.AccountAPI.Controllers
             {
                 return NoContent();
             }
-            response = HiTechApi.ResponseBadRequest<object>();
+            response = HiTechApi.ResponseBadRequest();
             return BadRequest(response);
         }
     }
