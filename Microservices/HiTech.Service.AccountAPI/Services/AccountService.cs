@@ -21,12 +21,14 @@ namespace HiTech.Service.AccountAPI.Services
 
         public async Task<bool> AccountExists(int id)
         {
-            return await _accountRepository.GetAll().AsQueryable().AnyAsync(a => a.AccountId == id);
+            var account = await _accountRepository.GetByIDAsync(id);
+            return account != null;
         }
 
         public async Task<bool> AccountExists(string email)
         {
-            return await _accountRepository.GetAll().AsQueryable().AnyAsync(a => a.Email == email);
+            var account = await _accountRepository.GetByEmailAsync(email);
+            return account != null;
         }
 
         public async Task<AccountResponse?> CreateAsync(AccountRequest request)
@@ -54,7 +56,14 @@ namespace HiTech.Service.AccountAPI.Services
 
             if (account != null)
             {
-                result = await _accountRepository.DeleteAsync(account);
+                try
+                {
+                    result = await _accountRepository.DeleteAsync(account);
+                }
+                catch (Exception)
+                {
+                    result = false;
+                }
             }
 
             return result;
@@ -80,6 +89,18 @@ namespace HiTech.Service.AccountAPI.Services
             return _mapper.Map<AccountResponse>(account);
         }
 
+        public async Task<AccountResponse?> GetByEmailAsync(string email)
+        {
+            var account = await _accountRepository.GetByEmailAsync(email);
+
+            if (account == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<AccountResponse>(account);
+        }
+
         public async Task<bool> UpdateAsync(int id, AccountRequest request)
         {
             bool result = false;
@@ -87,10 +108,17 @@ namespace HiTech.Service.AccountAPI.Services
 
             if (account != null)
             {
-                _mapper.Map(request, account);
-                account.Password = PasswordEncoder.Encode(request.Password);
+                try
+                {
+                    _mapper.Map(request, account);
+                    account.Password = PasswordEncoder.Encode(request.Password);
 
-                result = await _accountRepository.UpdateAsync(account);
+                    result = await _accountRepository.UpdateAsync(account);
+                }
+                catch (Exception)
+                {
+                    result = false;
+                }
             }
 
             return result;
