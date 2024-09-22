@@ -9,25 +9,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{DA86AA95-6DB8-48B7-9AAD-C0CC25C6EAED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Shared", "Shared\HiTech.Shared\HiTech.Shared.csproj", "{D5725A4C-F3B2-4477-A2E5-DD9121796B9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Shared", "Shared\HiTech.Shared\HiTech.Shared.csproj", "{D5725A4C-F3B2-4477-A2E5-DD9121796B9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Shared.EF", "Shared\HiTech.Shared.EF\HiTech.Shared.EF.csproj", "{28D344DA-7FFE-4ABE-A4FC-DC1583474AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Shared.EF", "Shared\HiTech.Shared.EF\HiTech.Shared.EF.csproj", "{28D344DA-7FFE-4ABE-A4FC-DC1583474AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Yarp", "Gateway\HiTech.Yarp\HiTech.Yarp.csproj", "{27CAD9CC-99B1-4B27-8572-811576E54097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Yarp", "Gateway\HiTech.Yarp\HiTech.Yarp.csproj", "{27CAD9CC-99B1-4B27-8572-811576E54097}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.BlogAPI", "Microservices\HiTech.Service.BlogAPI\HiTech.Service.BlogAPI.csproj", "{77EAD5AC-6927-4AD2-80D7-5410D25C1B5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Service.BlogAPI", "Microservices\HiTech.Service.BlogAPI\HiTech.Service.BlogAPI.csproj", "{77EAD5AC-6927-4AD2-80D7-5410D25C1B5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.AccountAPI", "Microservices\HiTech.Service.AccountAPI\HiTech.Service.AccountAPI.csproj", "{FCF3850E-C00B-4AB7-AE90-944FD789698A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Service.AccountAPI", "Microservices\HiTech.Service.AccountAPI\HiTech.Service.AccountAPI.csproj", "{FCF3850E-C00B-4AB7-AE90-944FD789698A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.ChatAPI", "Microservices\HiTech.Service.ChatAPI\HiTech.Service.ChatAPI.csproj", "{C3BE9B22-F3E3-4915-A85E-A327E97C2B89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Service.ChatAPI", "Microservices\HiTech.Service.ChatAPI\HiTech.Service.ChatAPI.csproj", "{C3BE9B22-F3E3-4915-A85E-A327E97C2B89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.FriendAPI", "Microservices\HiTech.Service.FriendAPI\HiTech.Service.FriendAPI.csproj", "{09D02C53-3161-492A-BA90-7F915A20D2FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiTech.Service.AuthAPI", "Microservices\HiTech.Service.AuthAPI\HiTech.Service.AuthAPI.csproj", "{3F76382C-5169-48E8-8F18-70458794DA7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.NotificationAPI", "Microservices\HiTech.Service.NotificationAPI\HiTech.Service.NotificationAPI.csproj", "{1B03753A-A4B3-48F9-8F87-B7892D42BA5E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{D445B1DD-D0D7-4940-A088-D06043FE20EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.AuthAPI", "Microservices\HiTech.Service.AuthAPI\HiTech.Service.AuthAPI.csproj", "{3F76382C-5169-48E8-8F18-70458794DA7D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.Service.GroupAPI", "Microservices\HiTech.Service.GroupAPI\HiTech.Service.GroupAPI.csproj", "{B6B20571-4B0C-48C1-B208-822DFA626684}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiTech.RabbitMQ", "Integration\HiTech.RabbitMQ\HiTech.RabbitMQ.csproj", "{465A7FD0-0895-4465-9D7D-68BC59539907}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,22 +57,14 @@ Global
 		{C3BE9B22-F3E3-4915-A85E-A327E97C2B89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3BE9B22-F3E3-4915-A85E-A327E97C2B89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3BE9B22-F3E3-4915-A85E-A327E97C2B89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09D02C53-3161-492A-BA90-7F915A20D2FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09D02C53-3161-492A-BA90-7F915A20D2FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09D02C53-3161-492A-BA90-7F915A20D2FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09D02C53-3161-492A-BA90-7F915A20D2FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B03753A-A4B3-48F9-8F87-B7892D42BA5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B03753A-A4B3-48F9-8F87-B7892D42BA5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B03753A-A4B3-48F9-8F87-B7892D42BA5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B03753A-A4B3-48F9-8F87-B7892D42BA5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3F76382C-5169-48E8-8F18-70458794DA7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F76382C-5169-48E8-8F18-70458794DA7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F76382C-5169-48E8-8F18-70458794DA7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F76382C-5169-48E8-8F18-70458794DA7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B6B20571-4B0C-48C1-B208-822DFA626684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6B20571-4B0C-48C1-B208-822DFA626684}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B6B20571-4B0C-48C1-B208-822DFA626684}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6B20571-4B0C-48C1-B208-822DFA626684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{465A7FD0-0895-4465-9D7D-68BC59539907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{465A7FD0-0895-4465-9D7D-68BC59539907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{465A7FD0-0895-4465-9D7D-68BC59539907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{465A7FD0-0895-4465-9D7D-68BC59539907}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,10 +76,8 @@ Global
 		{77EAD5AC-6927-4AD2-80D7-5410D25C1B5B} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
 		{FCF3850E-C00B-4AB7-AE90-944FD789698A} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
 		{C3BE9B22-F3E3-4915-A85E-A327E97C2B89} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
-		{09D02C53-3161-492A-BA90-7F915A20D2FB} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
-		{1B03753A-A4B3-48F9-8F87-B7892D42BA5E} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
 		{3F76382C-5169-48E8-8F18-70458794DA7D} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
-		{B6B20571-4B0C-48C1-B208-822DFA626684} = {D5C33FD0-3714-415E-9F97-218B000BBEB7}
+		{465A7FD0-0895-4465-9D7D-68BC59539907} = {D445B1DD-D0D7-4940-A088-D06043FE20EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8027FD5-A24B-47F5-9B28-71C978740916}

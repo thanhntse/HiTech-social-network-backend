@@ -7,6 +7,7 @@ namespace HiTech.Service.AccountAPI.Services
     {
         IAsyncEnumerable<AccountResponse> GetAllAsync();
         Task<AccountResponse?> GetByIDAsync(int id);
+        Task<AccountResponse?> GetByEmailAsync(string email);
         Task<AccountResponse?> CreateAsync(AccountRequest request);
         Task<bool> UpdateAsync(int id, AccountRequest request);
         Task<bool> DeleteAsync(int id);
