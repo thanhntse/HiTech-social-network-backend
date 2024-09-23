@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace HiTech.Service.AuthAPI.Entities
 {
@@ -38,8 +39,10 @@ namespace HiTech.Service.AuthAPI.Entities
         [Column("is_deleted")]
         public bool IsDeleted { get; set; } = false;
 
+        [JsonIgnore]
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
+        [JsonIgnore]
         public virtual ICollection<ExpiredToken> ExpiredTokens { get; set; } = new List<ExpiredToken>();
     }
 }

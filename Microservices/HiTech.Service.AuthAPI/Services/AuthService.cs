@@ -32,7 +32,7 @@ namespace HiTech.Service.AuthAPI.Services
         public async Task<AuthResponse?> Login(LoginRequest login)
         {
             var account = await _accountRepository.GetByEmailAsync(login.Email);
-            if (account == null || account.IsDeleted == true || !PasswordEncoder.Verify(account.Password, login.Password))
+            if (account == null || account.IsDeleted == true || !PasswordEncoder.Verify(login.Password, account.Password))
             {
                 return null;
             }
@@ -52,9 +52,6 @@ namespace HiTech.Service.AuthAPI.Services
         public async Task<AuthResponse?> RefreshToken(string refreshToken)
         {
             var token = await _refeshTokenRepository.GetByRefreshTokenAsync(refreshToken);
-            //var token = await _context.RefreshTokens
-            //    .Include(s => s.Account)
-            //    .FirstOrDefaultAsync(x => x.Token == refreshToken);
 
             if (token == null || !token.IsActive)
                 return null;
@@ -83,6 +80,7 @@ namespace HiTech.Service.AuthAPI.Services
             return new AuthResponse { AccessToken = newJwtToken, RefreshToken = newRefreshToken };
         }
 
+        //Need Maintain
         public async Task<bool> Logout(string id, LogoutRequest request)
         {
             try
