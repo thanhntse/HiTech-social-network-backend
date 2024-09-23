@@ -80,16 +80,15 @@ namespace HiTech.Service.AuthAPI.Services
             return new AuthResponse { AccessToken = newJwtToken, RefreshToken = newRefreshToken };
         }
 
-        //Need Maintain
         public async Task<bool> Logout(string id, LogoutRequest request)
         {
             try
             {
-                if (request.AccessToken == null)
+                var accountId = _jwtUtil.GetAccountIdFromToken(request.AccessToken);
+                if (accountId == null || !accountId.Equals(id))
                     return false;
 
                 var refeshToken = await _refeshTokenRepository.GetByRefreshTokenAsync(request.RefreshToken);
-
                 if (refeshToken == null || !refeshToken.IsActive)
                     return false;
 

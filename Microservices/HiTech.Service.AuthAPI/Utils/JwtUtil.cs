@@ -75,5 +75,26 @@ namespace HiTech.Service.AuthAPI.Utils
             }
             return true;
         }
+
+        public string? GetAccountIdFromToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            // Kiểm tra xem token có hợp lệ không
+            if (handler.CanReadToken(token))
+            {
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Lấy Claim chứa AccountId
+                var accountIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
+
+                if (accountIdClaim != null)
+                {
+                    return accountIdClaim.Value; // Trả về AccountId
+                }
+            }
+
+            return null; // Hoặc xử lý trường hợp không tìm thấy token hợp lệ
+        }
     }
 }
