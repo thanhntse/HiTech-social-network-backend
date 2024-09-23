@@ -9,7 +9,7 @@ namespace HiTech.Service.AuthAPI.Repositories
     {
     }
 
-    public class ExpiredTokenRepository
+    public sealed class ExpiredTokenRepository
         : GenericRepository<AuthDbContext, ExpiredToken, string>, IExpiredTokenRepository
     {
         public ExpiredTokenRepository(AuthDbContext context) : base(context)

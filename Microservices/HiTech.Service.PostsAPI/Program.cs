@@ -1,5 +1,5 @@
 
-namespace HiTech.Service.ChatAPI
+namespace HiTech.Service.PostsAPI
 {
     public class Program
     {

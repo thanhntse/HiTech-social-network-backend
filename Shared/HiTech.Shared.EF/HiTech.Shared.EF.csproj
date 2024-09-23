@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\HiTech.Shared\HiTech.Shared.csproj" />
+		<ProjectReference Include="..\HiTech.Shared\HiTech.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -70,7 +70,7 @@ namespace HiTech.Shared.Controllers
         /// <summary>
         /// Generic response for "503 Service Unavailable" errors.
         /// </summary>
-        public static ApiResponse ResponseUnavailable() => ResponseNoData   (503, "Server is unavailable to handle the request.");
+        public static ApiResponse ResponseUnavailable() => ResponseNoData(503, "Server is unavailable to handle the request.");
 
         /// <summary>
         /// Convenience method to return a 200 OK response with data.

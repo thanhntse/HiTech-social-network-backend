@@ -1,30 +1,34 @@
-﻿
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HiTech.Service.AuthAPI.Data;
+using HiTech.Service.AuthAPI.Mapper;
+using HiTech.Service.AuthAPI.Repositories;
+using HiTech.Service.AuthAPI.Services.IService;
+using HiTech.Service.AuthAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using PUBS_WEB_API.Services;
+using HiTech.Service.AuthAPI.Utils;
 
-namespace PUBS_WEB_API
+namespace HiTech.Service.AuthAPI
 {
     public class Program
     {
-        private static string GetConnectionString()
-        {
-            IConfiguration configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", true, true).Build();
-            return configuration["ConnectionStrings:DBDefault"];
-        }
+        //private static string GetConnectionString()
+        //{
+        //    IConfiguration configuration = new ConfigurationBuilder()
+        //            .SetBasePath(Directory.GetCurrentDirectory())
+        //            .AddJsonFile("appsettings.json", true, true).Build();
+        //    return configuration["ConnectionStrings:DBDefault"];
+        //}
 
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Database Context Dependency Injection
-            builder.Services.AddDbContext<PubsContext>(opt => opt.UseSqlServer(GetConnectionString()));
+            builder.Services.AddDbContext<AuthDbContext>(opt => opt.UseSqlServer(builder.Configuration["ConnectionStrings:DBDefault"]));
 
-            // Add JWT
+            //Add JWT
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,7 +59,7 @@ namespace PUBS_WEB_API
                         if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
                         {
                             var token = authHeader.Substring("Bearer ".Length).Trim();
-                            var dbContext = context.HttpContext.RequestServices.GetRequiredService<PubsContext>();
+                            var dbContext = context.HttpContext.RequestServices.GetRequiredService<AuthDbContext>();
                             bool isTokenRevoked = await dbContext.ExpiredTokens.AnyAsync(rt => rt.Token == token);
 
                             if (isTokenRevoked)
@@ -71,16 +75,14 @@ namespace PUBS_WEB_API
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IAccountService, AccountService>();
-            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-            builder.Services.AddScoped<IStoreService, StoreService>();
-            builder.Services.AddScoped<ITitleService, TitleService>();
+            builder.Services.AddScoped<JwtUtil>();
 
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            builder.Services.AddScoped<IStoreRepository, StoreRepository>();
-            builder.Services.AddScoped<ITitleRepository, TitleRepository>();
+            builder.Services.AddScoped<IRefeshTokenRepository, RefeshTokenRepository>();
+            builder.Services.AddScoped<IExpiredTokenRepository, ExpiredTokenRepository>();
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             builder.Services.AddControllers();
 

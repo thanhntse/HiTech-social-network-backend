@@ -1,28 +1,37 @@
-﻿using HiTech.Service.AuthAPI.DTOs.Request;
+﻿using AutoMapper;
+using HiTech.Service.AuthAPI.DTOs.Request;
 using HiTech.Service.AuthAPI.DTOs.Response;
 using HiTech.Service.AuthAPI.Entities;
 using HiTech.Service.AuthAPI.Repositories;
+using HiTech.Service.AuthAPI.Services.IService;
 using HiTech.Service.AuthAPI.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiTech.Service.AuthAPI.Services
 {
     public class AuthService : IAuthService
     {
         private readonly JwtUtil _jwtUtil;
+        private readonly IMapper _mapper;
+        private readonly IAccountRepository _accountRepository;
         private readonly IRefeshTokenRepository _refeshTokenRepository;
         private readonly IExpiredTokenRepository _expiredTokenRepository;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IRefeshTokenRepository refeshTokenRepository, 
-            IExpiredTokenRepository expiredTokenRepository, JwtUtil jwtUtil)
+        public AuthService(IAccountRepository accountRepository, IRefeshTokenRepository refeshTokenRepository,
+            IExpiredTokenRepository expiredTokenRepository, JwtUtil jwtUtil, IMapper mapper, ILogger<AuthService> logger)
         {
+            _accountRepository = accountRepository;
             _expiredTokenRepository = expiredTokenRepository;
             _refeshTokenRepository = refeshTokenRepository;
             _jwtUtil = jwtUtil;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<AuthResponse?> Login(LoginRequest login)
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Username == login.Username);
+            var account = await _accountRepository.GetByEmailAsync(login.Email);
             if (account == null || account.IsDeleted == true || !PasswordEncoder.Verify(account.Password, login.Password))
             {
                 return null;
@@ -30,16 +39,22 @@ namespace HiTech.Service.AuthAPI.Services
 
             var jwtToken = _jwtUtil.GenerateJwtToken(account);
             var refreshToken = _jwtUtil.GenerateRefreshToken();
-            _jwtUtil.SaveRefreshToken(account, refreshToken);
+            bool success = await _jwtUtil.SaveRefreshToken(account.AccountId, refreshToken);
+
+            if (!success)
+            {
+                return null;
+            }
 
             return new AuthResponse { AccessToken = jwtToken, RefreshToken = refreshToken };
         }
 
         public async Task<AuthResponse?> RefreshToken(string refreshToken)
         {
-            var token = await _context.RefreshTokens
-                .Include(s => s.Account)
-                .FirstOrDefaultAsync(x => x.Token == refreshToken);
+            var token = await _refeshTokenRepository.GetByRefreshTokenAsync(refreshToken);
+            //var token = await _context.RefreshTokens
+            //    .Include(s => s.Account)
+            //    .FirstOrDefaultAsync(x => x.Token == refreshToken);
 
             if (token == null || !token.IsActive)
                 return null;
@@ -47,49 +62,72 @@ namespace HiTech.Service.AuthAPI.Services
             var newJwtToken = _jwtUtil.GenerateJwtToken(token.Account);
 
             var newRefreshToken = _jwtUtil.GenerateRefreshToken();
+            bool success = await _jwtUtil.SaveRefreshToken(token.Account.AccountId, newRefreshToken);
+
+            if (!success)
+            {
+                return null;
+            }
+
             token.Revoked = DateTime.Now;  // Vô hiệu hóa refresh token cũ
-            _jwtUtil.SaveRefreshToken(token.Account, newRefreshToken);
+            try
+            {
+                await _refeshTokenRepository.UpdateAsync(token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while disable the old refresh token at {Time}.", DateTime.Now);
+                return null;
+            }
 
             return new AuthResponse { AccessToken = newJwtToken, RefreshToken = newRefreshToken };
         }
 
         public async Task<bool> Logout(string id, LogoutRequest request)
         {
-            if (request.AccessToken == null)
-                return false;
-
-            var refeshToken = await _refeshTokenRepository.GetByRefreshTokenAsync(request.RefreshToken);
-
-            if (refeshToken == null || !refeshToken.IsActive)
-                return false;
-
-            // Vô hiệu hóa access token
-            var token = new ExpiredToken
+            try
             {
-                Token = request.AccessToken,
-                InvalidationTime = DateTime.Now,
-                AccountId = Int32.Parse(id),
-            };
-            await _expiredTokenRepository.CreateAsync(token);
+                if (request.AccessToken == null)
+                    return false;
 
-            // Vô hiệu hóa refresh token
-            refeshToken.Revoked = DateTime.Now;
+                var refeshToken = await _refeshTokenRepository.GetByRefreshTokenAsync(request.RefreshToken);
 
-            await _refeshTokenRepository.UpdateAsync(refeshToken);
+                if (refeshToken == null || !refeshToken.IsActive)
+                    return false;
+
+                // Vô hiệu hóa access token
+                var token = new ExpiredToken
+                {
+                    Token = request.AccessToken,
+                    InvalidationTime = DateTime.Now,
+                    AccountId = Int32.Parse(id),
+                };
+                await _expiredTokenRepository.CreateAsync(token);
+
+                // Vô hiệu hóa refresh token
+                refeshToken.Revoked = DateTime.Now;
+
+                await _refeshTokenRepository.UpdateAsync(refeshToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while logout at {Time}.", DateTime.Now);
+                return false;
+            }
 
             return true;
         }
 
-        //public async Task<AccountResponse?> GetProfile(string id)
-        //{
-        //    var account = await _context.Accounts.FindAsync(Int32.Parse(id));
+        public async Task<AccountResponse?> GetProfile(string id)
+        {
+            var account = await _accountRepository.GetByIDAsync(Int32.Parse(id));
 
-        //    if (account == null)
-        //    {
-        //        return null;
-        //    }
+            if (account == null)
+            {
+                return null;
+            }
 
-        //    return _mapper.Map<AccountResponse>(account);
-        //}
+            return _mapper.Map<AccountResponse>(account);
+        }
     }
 }

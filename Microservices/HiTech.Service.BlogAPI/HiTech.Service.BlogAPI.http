@@ -1,6 +1,0 @@
-@HiTech.Service.BlogAPI_HostAddress = http://localhost:5001
-
-GET {{HiTech.Service.BlogAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

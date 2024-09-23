@@ -11,14 +11,14 @@ namespace HiTech.Service.AuthAPI.Repositories
         Task<RefreshToken?> GetByRefreshTokenAsync(string token);
     }
 
-    public sealed class RefeshTokenRepository 
+    public sealed class RefeshTokenRepository
         : GenericRepository<AuthDbContext, RefreshToken, int>, IRefeshTokenRepository
     {
         public RefeshTokenRepository(AuthDbContext context) : base(context)
         {
         }
 
-        public async Task<RefreshToken?> GetByRefreshTokenAsync(string token) 
+        public async Task<RefreshToken?> GetByRefreshTokenAsync(string token)
             => await DbSet.FirstOrDefaultAsync(t => t.Token == token);
     }
 }
