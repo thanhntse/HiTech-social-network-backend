@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HiTech.Service.AuthAPI.Entities
 {
@@ -15,5 +15,7 @@ namespace HiTech.Service.AuthAPI.Entities
 
         [Column("account_id")]
         public int AccountId { get; set; }
+
+        public virtual Account Account { get; set; } = null!;
     }
 }

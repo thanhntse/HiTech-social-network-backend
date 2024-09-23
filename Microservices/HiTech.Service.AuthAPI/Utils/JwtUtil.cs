@@ -1,5 +1,4 @@
-﻿using HiTech.Service.AuthAPI.DTOs.Message;
-using HiTech.Service.AuthAPI.Entities;
+﻿using HiTech.Service.AuthAPI.Entities;
 using HiTech.Service.AuthAPI.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,23 +12,25 @@ namespace HiTech.Service.AuthAPI.Utils
     {
         private readonly IRefeshTokenRepository _refreshTokenRepository;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<JwtUtil> _logger;
 
-        public JwtUtil(IRefeshTokenRepository refreshTokenRepository, IConfiguration configuration)
+        public JwtUtil(IRefeshTokenRepository refreshTokenRepository, IConfiguration configuration, ILogger<JwtUtil> logger)
         {
             _refreshTokenRepository = refreshTokenRepository;
             _configuration = configuration;
+            _logger = logger;
         }
 
-        public string GenerateJwtToken(LoginResponseMessage accountData)
+        public string GenerateJwtToken(Account account)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, accountData.AccountId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, accountData.Email),
-                new Claim(ClaimTypes.Role, accountData.Role),
+                new Claim(JwtRegisteredClaimNames.Sub, account.AccountId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, account.Email),
+                new Claim(ClaimTypes.Role, account.Role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -53,7 +54,7 @@ namespace HiTech.Service.AuthAPI.Utils
             }
         }
 
-        public async void SaveRefreshToken(int id, string refreshToken)
+        public async Task<bool> SaveRefreshToken(int id, string refreshToken)
         {
             var token = new RefreshToken
             {
@@ -62,7 +63,17 @@ namespace HiTech.Service.AuthAPI.Utils
                 Created = DateTime.Now,
                 AccountId = id,
             };
-            await _refreshTokenRepository.CreateAsync(token);
+
+            try
+            {
+                await _refreshTokenRepository.CreateAsync(token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating the refresh token at {Time}.", DateTime.Now);
+                return false;
+            }
+            return true;
         }
     }
 }

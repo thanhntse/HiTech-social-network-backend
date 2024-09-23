@@ -5,11 +5,11 @@
 /// </summary>
 public interface ICacheEntrySerializer
 {
-	byte[] Serialize<T>(T value);
+    byte[] Serialize<T>(T value);
 
-	Task<byte[]> SerializeAsync<T>(T value, CancellationToken token = default);
+    Task<byte[]> SerializeAsync<T>(T value, CancellationToken token = default);
 
-	T? Deserialize<T>(byte[] bytes);
+    T? Deserialize<T>(byte[] bytes);
 
-	Task<T?> DeserializeAsync<T>(byte[] bytes, CancellationToken token = default);
+    Task<T?> DeserializeAsync<T>(byte[] bytes, CancellationToken token = default);
 }

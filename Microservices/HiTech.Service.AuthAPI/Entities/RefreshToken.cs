@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HiTech.Service.AuthAPI.Entities
 {
@@ -31,5 +31,7 @@ namespace HiTech.Service.AuthAPI.Entities
 
         [NotMapped]
         public bool IsActive => Revoked == null && !IsExpired;
+
+        public virtual Account Account { get; set; } = null!;
     }
 }

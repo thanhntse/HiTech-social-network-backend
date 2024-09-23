@@ -1,0 +1,6 @@
+@HiTech.Service.PostsAPI_HostAddress = http://localhost:5016
+
+GET {{HiTech.Service.PostsAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
