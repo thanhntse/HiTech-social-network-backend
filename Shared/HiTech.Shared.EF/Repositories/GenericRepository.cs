@@ -13,59 +13,58 @@ public abstract class GenericRepository<T, TEntity, TKey> : IGenericRepository<T
     where TKey : IEquatable<TKey>
 {
     protected readonly T _context;
+    protected readonly DbSet<TEntity> _dbSet;
 
     protected GenericRepository(T context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _dbSet = _context.Set<TEntity>();
     }
-
-    protected DbSet<TEntity> DbSet => _context.Set<TEntity>();
-
 
     /// <inheritdoc/>
     public virtual async ValueTask<TEntity> CreateAsync(TEntity entity)
     {
-        var result = await DbSet.AddAsync(entity);
+        var result = await _dbSet.AddAsync(entity);
         return result.Entity;
     }
 
     /// <inheritdoc/>
     public virtual async ValueTask<TEntity?> GetByIDAsync(TKey id)
-        => await DbSet.FindAsync(id);
+        => await _dbSet.FindAsync(id);
 
     /// <inheritdoc/>
     public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync()
-        => await DbSet.ToListAsync();
+        => await _dbSet.ToListAsync();
 
     /// <inheritdoc/>
     public virtual void Update(TEntity entity)
     {
-        DbSet.Update(entity);
+        _dbSet.Update(entity);
     }
 
     /// <inheritdoc/>
     public virtual void Delete(TEntity entity)
     {
-        DbSet.Remove(entity);
+        _dbSet.Remove(entity);
     }
 
     /// <inheritdoc/>
     public virtual async ValueTask CreateRangeAsync(IEnumerable<TEntity> entities)
     {
-        await DbSet.AddRangeAsync(entities);
+        await _dbSet.AddRangeAsync(entities);
     }
 
     /// <inheritdoc/>
     public virtual void DeleteRange(IEnumerable<TEntity> entities)
     {
-        DbSet.RemoveRange(entities);
+        _dbSet.RemoveRange(entities);
     }
 
     /// <inheritdoc/>
     public virtual IQueryable<TEntity> FindAll(Expression<Func<TEntity, bool>> expression)
-        => DbSet.Where(expression);
+        => _dbSet.Where(expression);
 
     /// <inheritdoc/>
     public virtual async ValueTask<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> expression)
-        => await DbSet.Where(expression).ToListAsync();
+        => await _dbSet.Where(expression).ToListAsync();
 }

@@ -19,6 +19,6 @@ namespace HiTech.Service.AuthAPI.Repositories
         }
 
         public async Task<RefreshToken?> GetByRefreshTokenAsync(string token)
-            => await DbSet.Include(s => s.Account).FirstOrDefaultAsync(t => t.Token == token);
+            => await _dbSet.Include(s => s.Account).FirstOrDefaultAsync(t => t.Token == token);
     }
 }

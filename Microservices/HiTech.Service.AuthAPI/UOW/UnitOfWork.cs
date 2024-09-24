@@ -5,6 +5,8 @@ namespace HiTech.Service.AuthAPI.UOW
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private bool _disposed = false;
+
         private readonly AuthDbContext _context;
         public IAccountRepository Accounts { get; private set; }
         public IRefeshTokenRepository RefeshTokens { get; private set; }
@@ -57,7 +59,24 @@ namespace HiTech.Service.AuthAPI.UOW
 
         public void Dispose()
         {
-            _context.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this); // Ngăn GC gọi finalizer
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Giải phóng các tài nguyên quản lý
+                    _context?.Dispose();
+                }
+
+                // Giải phóng tài nguyên không quản lý (nếu có)
+
+                _disposed = true;
+            }
         }
     }
 

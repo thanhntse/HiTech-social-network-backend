@@ -19,6 +19,6 @@ namespace HiTech.Service.AuthAPI.Repositories
         }
 
         public async Task<Account?> GetByEmailAsync(string email)
-            => await DbSet.FirstOrDefaultAsync(a => a.Email == email);
+            => await _dbSet.FirstOrDefaultAsync(a => a.Email == email);
     }
 }
