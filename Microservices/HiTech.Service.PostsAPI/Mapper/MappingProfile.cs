@@ -12,7 +12,13 @@ namespace HiTech.Service.PostsAPI.Mapper
             CreateMap<CommentRequest, Comment>();
             CreateMap<Comment, CommentReponse>();
 
-            CreateMap<PostRequest, Post>();
+            CreateMap<PostRequest, Post>()
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
+                    src.Images.Select((imageUrl, index) => new Image
+                    {
+                        ImageUrl = imageUrl,
+                        ImageNo = index + 1
+                    }).ToList()));
             CreateMap<Post, PostResponse>();
 
             CreateMap<Image, ImageResponse>();

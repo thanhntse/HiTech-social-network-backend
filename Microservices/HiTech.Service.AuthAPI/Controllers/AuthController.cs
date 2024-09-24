@@ -48,6 +48,10 @@ namespace HiTech.Service.AuthAPI.Controllers
         public async Task<ActionResult<ApiResponse>> Logout([FromBody] LogoutRequest request)
         {
             var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
             bool response = await _authService.Logout(id, request);
 
             if (response)
@@ -62,7 +66,10 @@ namespace HiTech.Service.AuthAPI.Controllers
         public async Task<ActionResult<ApiResponse<AccountResponse>>> GetProfile()
         {
             var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+            if (id == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
             AccountResponse? data = await _authService.GetProfile(id);
 
             if (data != null)

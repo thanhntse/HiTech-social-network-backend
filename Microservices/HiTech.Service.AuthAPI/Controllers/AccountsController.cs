@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HiTech.Service.AuthAPI.Controllers
 {
-    [Route("api/hitech/account")]
+    [Route("api/hitech/accounts")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
@@ -18,7 +18,7 @@ namespace HiTech.Service.AuthAPI.Controllers
             _accountService = accountService;
         }
 
-        // GET: api/hitech/account
+        // GET: api/hitech/accounts
         [Authorize]
         [HttpGet]
         public ActionResult<ApiResponse<IAsyncEnumerable<AccountResponse>>> GetAccounts()
@@ -28,7 +28,7 @@ namespace HiTech.Service.AuthAPI.Controllers
             return Ok(response);
         }
 
-        // GET: api/hitech/account/5
+        // GET: api/hitech/accounts/5
         [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<AccountResponse>>> GetAccount(int id)
@@ -42,7 +42,7 @@ namespace HiTech.Service.AuthAPI.Controllers
             return account != null ? Ok(response) : NotFound(response);
         }
 
-        // PUT: api/hitech/account/5
+        // PUT: api/hitech/accounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPut("{id}")]
@@ -65,7 +65,7 @@ namespace HiTech.Service.AuthAPI.Controllers
             return BadRequest(response);
         }
 
-        // POST: api/hitech/account
+        // POST: api/hitech/accounts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<ApiResponse<AccountResponse>>> PostAccount(AccountCreationRequest request)
@@ -89,7 +89,7 @@ namespace HiTech.Service.AuthAPI.Controllers
                 new { id = ((ApiResponse<AccountResponse>)response)?.Data?.AccountId }, response);
         }
 
-        // DELETE: api/hitech/account/5
+        // DELETE: api/hitech/accounts/5
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse>> DeleteAccount(int id)
