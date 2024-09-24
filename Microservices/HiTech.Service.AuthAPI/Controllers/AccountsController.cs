@@ -21,9 +21,9 @@ namespace HiTech.Service.AuthAPI.Controllers
         // GET: api/hitech/accounts
         [Authorize]
         [HttpGet]
-        public ActionResult<ApiResponse<IAsyncEnumerable<AccountResponse>>> GetAccounts()
+        public async Task<ActionResult<ApiResponse<IEnumerable<AccountResponse>>>> GetAccounts()
         {
-            var accounts = _accountService.GetAllAsync();
+            var accounts = await _accountService.GetAllAsync();
             var response = HiTechApi.ResponseOk(accounts);
             return Ok(response);
         }

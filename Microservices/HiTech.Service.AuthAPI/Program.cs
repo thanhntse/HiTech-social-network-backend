@@ -1,6 +1,5 @@
 using HiTech.Service.AuthAPI.Data;
 using HiTech.Service.AuthAPI.Mapper;
-using HiTech.Service.AuthAPI.Repositories;
 using HiTech.Service.AuthAPI.Services.IService;
 using HiTech.Service.AuthAPI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using HiTech.Service.AuthAPI.Utils;
+using HiTech.Service.AuthAPI.UOW;
 
 namespace HiTech.Service.AuthAPI
 {
@@ -77,9 +77,7 @@ namespace HiTech.Service.AuthAPI
 
             builder.Services.AddScoped<JwtUtil>();
 
-            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-            builder.Services.AddScoped<IRefeshTokenRepository, RefeshTokenRepository>();
-            builder.Services.AddScoped<IExpiredTokenRepository, ExpiredTokenRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IAccountService, AccountService>();

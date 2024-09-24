@@ -21,33 +21,6 @@ public abstract class GenericRepository<T, TEntity, TKey> : IGenericRepository<T
 
     protected DbSet<TEntity> DbSet => _context.Set<TEntity>();
 
-    ///// <inheritdoc/>
-    //public virtual TEntity Create(TEntity t)
-    //{
-    //    var result = DbSet.Add(t);
-    //    _context.SaveChanges();
-    //    return result.Entity;
-    //}
-
-    ///// <inheritdoc/>
-    //public virtual TEntity? GetByID(TKey id) => DbSet.Find(id);
-
-    ///// <inheritdoc/>
-    //public virtual IEnumerable<TEntity> GetAll() => DbSet;
-
-    ///// <inheritdoc/>
-    //public virtual bool Update(TEntity t)
-    //{
-    //    DbSet.Update(t);
-    //    return _context.SaveChanges() > 0;
-    //}
-
-    ///// <inheritdoc/>
-    //public virtual bool Delete(TEntity t)
-    //{
-    //    DbSet.Remove(t);
-    //    return _context.SaveChanges() > 0;
-    //}
 
     /// <inheritdoc/>
     public virtual async ValueTask<TEntity> CreateAsync(TEntity entity)

@@ -10,16 +10,6 @@ public interface IGenericRepository<TEntity, TKey>
     where TEntity : class, new()
     where TKey : IEquatable<TKey>
 {
-    //TEntity Create(TEntity t);
-
-    //TEntity? GetByID(TKey id);
-
-    //IEnumerable<TEntity> GetAll();
-
-    //bool Update(TEntity t);
-
-    //bool Delete(TEntity t);
-
     ValueTask<TEntity> CreateAsync(TEntity entity);
 
     ValueTask<TEntity?> GetByIDAsync(TKey id);

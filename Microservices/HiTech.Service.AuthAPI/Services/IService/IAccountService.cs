@@ -5,7 +5,7 @@ namespace HiTech.Service.AuthAPI.Services.IService
 {
     public interface IAccountService
     {
-        IAsyncEnumerable<AccountResponse> GetAllAsync();
+        Task<IEnumerable<AccountResponse>> GetAllAsync();
         Task<AccountResponse?> GetByIDAsync(int id);
         Task<AccountResponse?> GetByEmailAsync(string email);
         Task<AccountResponse?> CreateAsync(AccountCreationRequest request);

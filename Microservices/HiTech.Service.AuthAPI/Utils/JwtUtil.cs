@@ -1,5 +1,5 @@
 ﻿using HiTech.Service.AuthAPI.Entities;
-using HiTech.Service.AuthAPI.Repositories;
+using HiTech.Service.AuthAPI.UOW;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,13 +10,13 @@ namespace HiTech.Service.AuthAPI.Utils
 {
     public class JwtUtil
     {
-        private readonly IRefeshTokenRepository _refreshTokenRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly ILogger<JwtUtil> _logger;
 
-        public JwtUtil(IRefeshTokenRepository refreshTokenRepository, IConfiguration configuration, ILogger<JwtUtil> logger)
+        public JwtUtil(IUnitOfWork unitOfWork, IConfiguration configuration, ILogger<JwtUtil> logger)
         {
-            _refreshTokenRepository = refreshTokenRepository;
+            _unitOfWork = unitOfWork;
             _configuration = configuration;
             _logger = logger;
         }
@@ -66,7 +66,8 @@ namespace HiTech.Service.AuthAPI.Utils
 
             try
             {
-                await _refreshTokenRepository.CreateAsync(token);
+                await _unitOfWork.RefeshTokens.CreateAsync(token);
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {

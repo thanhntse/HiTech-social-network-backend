@@ -2,10 +2,9 @@
 using HiTech.Service.AuthAPI.DTOs.Request;
 using HiTech.Service.AuthAPI.DTOs.Response;
 using HiTech.Service.AuthAPI.Entities;
-using HiTech.Service.AuthAPI.Repositories;
 using HiTech.Service.AuthAPI.Services.IService;
+using HiTech.Service.AuthAPI.UOW;
 using HiTech.Service.AuthAPI.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace HiTech.Service.AuthAPI.Services
 {
@@ -13,17 +12,12 @@ namespace HiTech.Service.AuthAPI.Services
     {
         private readonly JwtUtil _jwtUtil;
         private readonly IMapper _mapper;
-        private readonly IAccountRepository _accountRepository;
-        private readonly IRefeshTokenRepository _refeshTokenRepository;
-        private readonly IExpiredTokenRepository _expiredTokenRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IAccountRepository accountRepository, IRefeshTokenRepository refeshTokenRepository,
-            IExpiredTokenRepository expiredTokenRepository, JwtUtil jwtUtil, IMapper mapper, ILogger<AuthService> logger)
+        public AuthService(IUnitOfWork unitOfWork, JwtUtil jwtUtil, IMapper mapper, ILogger<AuthService> logger)
         {
-            _accountRepository = accountRepository;
-            _expiredTokenRepository = expiredTokenRepository;
-            _refeshTokenRepository = refeshTokenRepository;
+            _unitOfWork = unitOfWork;
             _jwtUtil = jwtUtil;
             _mapper = mapper;
             _logger = logger;
@@ -31,7 +25,7 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<AuthResponse?> Login(LoginRequest login)
         {
-            var account = await _accountRepository.GetByEmailAsync(login.Email);
+            var account = await _unitOfWork.Accounts.GetByEmailAsync(login.Email);
             if (account == null || account.IsDeleted == true || !PasswordEncoder.Verify(login.Password, account.Password))
             {
                 return null;
@@ -51,7 +45,7 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<AuthResponse?> RefreshToken(string refreshToken)
         {
-            var token = await _refeshTokenRepository.GetByRefreshTokenAsync(refreshToken);
+            var token = await _unitOfWork.RefeshTokens.GetByRefreshTokenAsync(refreshToken);
 
             if (token == null || !token.IsActive)
                 return null;
@@ -69,7 +63,8 @@ namespace HiTech.Service.AuthAPI.Services
             token.Revoked = DateTime.Now;  // Vô hiệu hóa refresh token cũ
             try
             {
-                await _refeshTokenRepository.UpdateAsync(token);
+                _unitOfWork.RefeshTokens.Update(token);
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -88,7 +83,7 @@ namespace HiTech.Service.AuthAPI.Services
                 if (accountId == null || !accountId.Equals(id))
                     return false;
 
-                var refeshToken = await _refeshTokenRepository.GetByRefreshTokenAsync(request.RefreshToken);
+                var refeshToken = await _unitOfWork.RefeshTokens.GetByRefreshTokenAsync(request.RefreshToken);
                 if (refeshToken == null || !refeshToken.IsActive)
                     return false;
 
@@ -99,12 +94,13 @@ namespace HiTech.Service.AuthAPI.Services
                     InvalidationTime = DateTime.Now,
                     AccountId = Int32.Parse(id),
                 };
-                await _expiredTokenRepository.CreateAsync(token);
+                await _unitOfWork.ExpiredTokens.CreateAsync(token);
 
                 // Vô hiệu hóa refresh token
                 refeshToken.Revoked = DateTime.Now;
 
-                await _refeshTokenRepository.UpdateAsync(refeshToken);
+                _unitOfWork.RefeshTokens.Update(refeshToken);
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -117,7 +113,7 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<AccountResponse?> GetProfile(string id)
         {
-            var account = await _accountRepository.GetByIDAsync(Int32.Parse(id));
+            var account = await _unitOfWork.Accounts.GetByIDAsync(Int32.Parse(id));
 
             if (account == null)
             {
