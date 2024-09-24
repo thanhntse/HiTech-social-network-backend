@@ -1,23 +1,25 @@
-﻿using HiTech.Service.AuthAPI.Data;
-using HiTech.Service.AuthAPI.Repositories;
+﻿using HiTech.Service.PostsAPI.Data;
+using HiTech.Service.PostsAPI.Repositories;
 
-namespace HiTech.Service.AuthAPI.UOW
+namespace HiTech.Service.PostsAPI.UOW
 {
     public class UnitOfWork : IUnitOfWork
     {
         private bool _disposed = false;
 
-        private readonly AuthDbContext _context;
-        public IAccountRepository Accounts { get; private set; }
-        public IRefeshTokenRepository RefeshTokens { get; private set; }
-        public IExpiredTokenRepository ExpiredTokens { get; private set; }
+        private readonly PostDbContext _context;
+        public IPostRepository Posts { get; private set; }
+        public ICommentRepository Comments { get; private set; }
+        public ILikeRepository Likes { get; private set; }
+        public IImageRepository Images { get; private set; }
 
-        public UnitOfWork(AuthDbContext context)
+        public UnitOfWork(PostDbContext context)
         {
             _context = context;
-            Accounts = new AccountRepository(context);
-            RefeshTokens = new RefeshTokenRepository(context);
-            ExpiredTokens = new ExpiredTokenRepository(context);
+            Posts = new PostRepository(context);
+            Comments = new CommentRepository(context);
+            Likes = new LikeRepository(context);
+            Images = new ImageRepository(context);
         }
 
         public async Task<int> SaveAsync()

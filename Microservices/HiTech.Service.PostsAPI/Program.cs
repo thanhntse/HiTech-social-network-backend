@@ -1,8 +1,8 @@
 using HiTech.Service.PostsAPI.Data;
 using HiTech.Service.PostsAPI.Mapper;
-using HiTech.Service.PostsAPI.Repositories;
 using HiTech.Service.PostsAPI.Services;
 using HiTech.Service.PostsAPI.Services.IService;
+using HiTech.Service.PostsAPI.UOW;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -66,10 +66,7 @@ namespace HiTech.Service.PostsAPI
             // Add services to the container.
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-            builder.Services.AddScoped<IPostRepository, PostRepository>();
-            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-            builder.Services.AddScoped<ILikeRepository, LikeRepository>();
-            builder.Services.AddScoped<IImageRepository, ImageRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddScoped<IPostService, PostService>();
 

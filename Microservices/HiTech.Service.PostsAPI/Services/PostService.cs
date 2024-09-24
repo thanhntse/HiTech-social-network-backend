@@ -2,24 +2,22 @@
 using HiTech.Service.PostsAPI.DTOs.Request;
 using HiTech.Service.PostsAPI.DTOs.Response;
 using HiTech.Service.PostsAPI.Entities;
-using HiTech.Service.PostsAPI.Repositories;
 using HiTech.Service.PostsAPI.Services.IService;
+using HiTech.Service.PostsAPI.UOW;
 
 namespace HiTech.Service.PostsAPI.Services
 {
     public class PostService : IPostService
     {
         private readonly IMapper _mapper;
-        private readonly IPostRepository _postRepository;
-        private readonly IImageRepository _imageRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PostService> _logger;
 
-        public PostService(IPostRepository postRepository, ILogger<PostService> logger, IMapper mapper, IImageRepository imageRepository)
+        public PostService(ILogger<PostService> logger, IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _postRepository = postRepository;
             _logger = logger;
             _mapper = mapper;
-            _imageRepository = imageRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PostResponse?> CreateAsync(string authorId, PostRequest request)
@@ -30,7 +28,8 @@ namespace HiTech.Service.PostsAPI.Services
             Post? response;
             try
             {
-                response = await _postRepository.CreateAsync(post);
+                response = await _unitOfWork.Posts.CreateAsync(post);
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -43,13 +42,14 @@ namespace HiTech.Service.PostsAPI.Services
         public async Task<bool> DeleteAsync(int id)
         {
             bool result = false;
-            var post = await _postRepository.GetByIDAsync(id);
+            var post = await _unitOfWork.Posts.GetByIDAsync(id);
 
             if (post != null)
             {
                 try
                 {
-                    result = await _postRepository.DeleteAsync(post);
+                    _unitOfWork.Posts.Delete(post);
+                    result = await _unitOfWork.SaveAsync() > 0;
                 }
                 catch (Exception ex)
                 {
@@ -62,13 +62,13 @@ namespace HiTech.Service.PostsAPI.Services
 
         public async Task<IEnumerable<PostResponse>> GetAllWithImageAsync()
         {
-            var posts = await _postRepository.GetAllWithImageAsync();
+            var posts = await _unitOfWork.Posts.GetAllWithImageAsync();
             return _mapper.Map<IEnumerable<PostResponse>>(posts);
         }
 
         public async Task<PostResponse?> GetByIDWithImageAsync(int id)
         {
-            var post = await _postRepository.GetByIDWithImageAsync(id);
+            var post = await _unitOfWork.Posts.GetByIDWithImageAsync(id);
 
             if (post == null)
             {
@@ -80,24 +80,28 @@ namespace HiTech.Service.PostsAPI.Services
 
         public async Task<bool> PostExists(int id)
         {
-            var post = await _postRepository.GetByIDAsync(id);
+            var post = await _unitOfWork.Posts.GetByIDAsync(id);
             return post != null;
         }
 
         public async Task<bool> UpdateAsync(int id, PostRequest request)
         {
             bool result = false;
-            var post = await _postRepository.GetByIDAsync(id);
+            var post = await _unitOfWork.Posts.GetByIDAsync(id);
 
             if (post != null)
             {
                 try
                 {
-                    await _imageRepository.RemoveAllByPostIDAsync(id);
-                    _mapper.Map(request, post);
-                    post.UpdateAt = DateTime.Now;
+                    result = await _unitOfWork.SaveWithTransactionAsync(async () =>
+                    {
+                        var images = await _unitOfWork.Images.FindAllAsync(i => i.PostId == id);
+                        _unitOfWork.Images.DeleteRange(images);
 
-                    result = await _postRepository.UpdateAsync(post);
+                        _mapper.Map(request, post);
+                        post.UpdateAt = DateTime.Now;
+                        await _unitOfWork.Posts.CreateAsync(post);
+                    }) > 0;
                 }
                 catch (Exception ex)
                 {
