@@ -1,28 +1,40 @@
-﻿namespace HiTech.Shared.Repositories;
+﻿using System.Linq.Expressions;
+
+namespace HiTech.Shared.Repositories;
 
 /// <summary>
 /// Generic interface for repositories.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IGenericRepository<TEntity, TKey> where TEntity : class, new() where TKey : IEquatable<TKey>
+public interface IGenericRepository<TEntity, TKey>
+    where TEntity : class, new()
+    where TKey : IEquatable<TKey>
 {
-	TEntity Create(TEntity t);
+    //TEntity Create(TEntity t);
 
-	TEntity? GetByID(TKey id);
+    //TEntity? GetByID(TKey id);
 
-	IEnumerable<TEntity> GetAll();
+    //IEnumerable<TEntity> GetAll();
 
-	bool Update(TEntity t);
+    //bool Update(TEntity t);
 
-	bool Delete(TEntity t);
+    //bool Delete(TEntity t);
 
-	ValueTask<TEntity> CreateAsync(TEntity t);
+    ValueTask<TEntity> CreateAsync(TEntity entity);
 
-	ValueTask<TEntity?> GetByIDAsync(TKey id);
+    ValueTask<TEntity?> GetByIDAsync(TKey id);
 
-	IAsyncEnumerable<TEntity> GetAllAsync();
+    ValueTask<IEnumerable<TEntity>> GetAllAsync();
 
-	ValueTask<bool> UpdateAsync(TEntity t);
+    void Update(TEntity entity);
 
-	ValueTask<bool> DeleteAsync(TEntity t);
+    void Delete(TEntity entity);
+
+    ValueTask CreateRangeAsync(IEnumerable<TEntity> entities);
+
+    void DeleteRange(IEnumerable<TEntity> entities);
+
+    IQueryable<TEntity> FindAll(Expression<Func<TEntity, bool>> expression);
+
+    ValueTask<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> expression);
 }

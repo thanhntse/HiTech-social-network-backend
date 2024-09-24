@@ -1,5 +1,6 @@
 ﻿using HiTech.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace HiTech.Shared.EF.Repositories;
 
@@ -20,59 +21,78 @@ public abstract class GenericRepository<T, TEntity, TKey> : IGenericRepository<T
 
     protected DbSet<TEntity> DbSet => _context.Set<TEntity>();
 
+    ///// <inheritdoc/>
+    //public virtual TEntity Create(TEntity t)
+    //{
+    //    var result = DbSet.Add(t);
+    //    _context.SaveChanges();
+    //    return result.Entity;
+    //}
+
+    ///// <inheritdoc/>
+    //public virtual TEntity? GetByID(TKey id) => DbSet.Find(id);
+
+    ///// <inheritdoc/>
+    //public virtual IEnumerable<TEntity> GetAll() => DbSet;
+
+    ///// <inheritdoc/>
+    //public virtual bool Update(TEntity t)
+    //{
+    //    DbSet.Update(t);
+    //    return _context.SaveChanges() > 0;
+    //}
+
+    ///// <inheritdoc/>
+    //public virtual bool Delete(TEntity t)
+    //{
+    //    DbSet.Remove(t);
+    //    return _context.SaveChanges() > 0;
+    //}
+
     /// <inheritdoc/>
-    public virtual TEntity Create(TEntity t)
+    public virtual async ValueTask<TEntity> CreateAsync(TEntity entity)
     {
-        var result = DbSet.Add(t);
-        _context.SaveChanges();
+        var result = await DbSet.AddAsync(entity);
         return result.Entity;
     }
 
     /// <inheritdoc/>
-    public virtual TEntity? GetByID(TKey id) => DbSet.Find(id);
+    public virtual async ValueTask<TEntity?> GetByIDAsync(TKey id)
+        => await DbSet.FindAsync(id);
 
     /// <inheritdoc/>
-    public virtual IEnumerable<TEntity> GetAll() => DbSet;
+    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync()
+        => await DbSet.ToListAsync();
 
     /// <inheritdoc/>
-    public virtual bool Update(TEntity t)
+    public virtual void Update(TEntity entity)
     {
-        DbSet.Update(t);
-        return _context.SaveChanges() > 0;
+        DbSet.Update(entity);
     }
 
     /// <inheritdoc/>
-    public virtual bool Delete(TEntity t)
+    public virtual void Delete(TEntity entity)
     {
-        DbSet.Remove(t);
-        return _context.SaveChanges() > 0;
+        DbSet.Remove(entity);
     }
 
     /// <inheritdoc/>
-    public virtual async ValueTask<TEntity> CreateAsync(TEntity t)
+    public virtual async ValueTask CreateRangeAsync(IEnumerable<TEntity> entities)
     {
-        var result = await DbSet.AddAsync(t);
-        await _context.SaveChangesAsync();
-        return result.Entity;
+        await DbSet.AddRangeAsync(entities);
     }
 
     /// <inheritdoc/>
-    public virtual async ValueTask<TEntity?> GetByIDAsync(TKey id) => await DbSet.FindAsync(id);
-
-    /// <inheritdoc/>
-    public virtual IAsyncEnumerable<TEntity> GetAllAsync() => DbSet.AsAsyncEnumerable();
-
-    /// <inheritdoc/>
-    public virtual async ValueTask<bool> UpdateAsync(TEntity t)
+    public virtual void DeleteRange(IEnumerable<TEntity> entities)
     {
-        DbSet.Update(t);
-        return await _context.SaveChangesAsync(CancellationToken.None) > 0;
+        DbSet.RemoveRange(entities);
     }
 
     /// <inheritdoc/>
-    public virtual async ValueTask<bool> DeleteAsync(TEntity t)
-    {
-        DbSet.Remove(t);
-        return await _context.SaveChangesAsync(CancellationToken.None) > 0;
-    }
+    public virtual IQueryable<TEntity> FindAll(Expression<Func<TEntity, bool>> expression)
+        => DbSet.Where(expression);
+
+    /// <inheritdoc/>
+    public virtual async ValueTask<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> expression)
+        => await DbSet.Where(expression).ToListAsync();
 }
