@@ -11,13 +11,15 @@ namespace HiTech.Service.PostsAPI.Services
     {
         private readonly IMapper _mapper;
         private readonly IPostRepository _postRepository;
+        private readonly IImageRepository _imageRepository;
         private readonly ILogger<PostService> _logger;
 
-        public PostService(IPostRepository postRepository, ILogger<PostService> logger, IMapper mapper)
+        public PostService(IPostRepository postRepository, ILogger<PostService> logger, IMapper mapper, IImageRepository imageRepository)
         {
             _postRepository = postRepository;
             _logger = logger;
             _mapper = mapper;
+            _imageRepository = imageRepository;
         }
 
         public async Task<PostResponse?> CreateAsync(string authorId, PostRequest request)
@@ -91,7 +93,8 @@ namespace HiTech.Service.PostsAPI.Services
             {
                 try
                 {
-                    _mapper.Map(result, post);
+                    await _imageRepository.RemoveAllByPostIDAsync(id);
+                    _mapper.Map(request, post);
                     post.UpdateAt = DateTime.Now;
 
                     result = await _postRepository.UpdateAsync(post);
@@ -102,7 +105,7 @@ namespace HiTech.Service.PostsAPI.Services
                     result = false;
                 }
             }
-            
+
             return result;
         }
     }
