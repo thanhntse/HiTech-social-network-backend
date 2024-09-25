@@ -27,8 +27,7 @@ namespace HiTech.Service.AuthAPI.Middlewares
 
             if (!IsPublicRoute(method, path))
             {
-                var token = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-
+                var token = context.Request.Headers.Authorization.ToString().Replace("Bearer", "").Trim();
                 if (!string.IsNullOrWhiteSpace(token) && (!await authService.IsValidToken(token)))
                 {
                     context.Response.Headers.WWWAuthenticate = "Bearer error=\"invalid_token\", error_description=\"The token has been revoked or expired\"";

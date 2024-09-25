@@ -100,7 +100,7 @@ namespace HiTech.Service.PostsAPI.Services
 
                         _mapper.Map(request, post);
                         post.UpdateAt = DateTime.Now;
-                        await _unitOfWork.Posts.CreateAsync(post);
+                        _unitOfWork.Posts.Update(post);
                     }) > 0;
                 }
                 catch (Exception ex)

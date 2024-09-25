@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
-
-namespace HiTech.Service.PostsAPI.Middlewares
+﻿namespace HiTech.Service.PostsAPI.Middlewares
 {
     public class TokenValidationMiddleware
     {
@@ -16,7 +13,7 @@ namespace HiTech.Service.PostsAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var token = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+            var token = context.Request.Headers.Authorization.ToString().Replace("Bearer", "").Trim();
 
             if (!string.IsNullOrWhiteSpace(token))
             {
