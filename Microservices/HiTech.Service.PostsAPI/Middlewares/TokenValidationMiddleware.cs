@@ -16,18 +16,19 @@ namespace HiTech.Service.PostsAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var authHeader = context.Request.Headers.Authorization.ToString();
+            var token = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+            if (!string.IsNullOrEmpty(token))
             {
-                var token = authHeader.Substring("Bearer ".Length).Trim();
-
                 HttpClient client = _factory.CreateClient("HiTech");
                 var response = await client.GetAsync($"auth/validate-token?token={token}");
+
                 if (!response.IsSuccessStatusCode)
                 {
-                    // Cancel authentication
-                    context.User = new ClaimsPrincipal();
+                    context.Response.Headers.WWWAuthenticate = "Bearer error=\"invalid_token\", error_description=\"The token has been revoked or expired\"";
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await context.Response.WriteAsync("The token has been revoked or expired.");
+                    return;
                 }
             }
             await _next(context);

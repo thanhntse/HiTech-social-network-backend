@@ -115,11 +115,23 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<bool> IsTokenRevoked(string token)
         {
-            var revokedToken = await _unitOfWork.ExpiredTokens.GetByIDAsync(token);
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-            var expiration = jwtToken.ValidTo;
-            return expiration < DateTime.UtcNow || revokedToken != null;
+            bool result = false;
+            try
+            {
+                var revokedToken = await _unitOfWork.ExpiredTokens.GetByIDAsync(token);
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var expiration = jwtToken.ValidTo;
+
+                result = expiration < DateTime.UtcNow || revokedToken != null;
+            }
+            catch (Exception ex)
+            {
+                result = true; // error => token invalid
+                _logger.LogError(ex, "An error occurred while validate token at {Time}.", DateTime.Now);
+            }
+
+            return result;
         }
 
         public async Task<AccountResponse?> GetProfile(string id)

@@ -1,11 +1,19 @@
 ﻿using HiTech.Service.AuthAPI.Services.IService;
-using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace HiTech.Service.AuthAPI.Middlewares
 {
     public class TokenValidationMiddleware
     {
         private readonly RequestDelegate _next;
+
+        private readonly Dictionary<string, HashSet<string>> _publicRoutes
+            = new Dictionary<string, HashSet<string>>
+            {
+                { "GET", new HashSet<string> { "^/api/hitech/auth/validate-token$" } },
+                { "POST", new HashSet<string> { "^/api/hitech/auth/login$", "^/api/hitech/auth/refresh-token$",
+                    "^/api/hitech/accounts$" } }
+            };
 
         public TokenValidationMiddleware(RequestDelegate next)
         {
@@ -14,19 +22,31 @@ namespace HiTech.Service.AuthAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context, IAuthService authService)
         {
-            var authHeader = context.Request.Headers.Authorization.ToString();
+            var path = context.Request.Path;
+            var method = context.Request.Method;
 
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+            if (!IsPublicRoute(method, path))
             {
-                var token = authHeader.Substring("Bearer ".Length).Trim();
+                var token = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
-                if (await authService.IsTokenRevoked(token))
+                if (!string.IsNullOrEmpty(token) && await authService.IsTokenRevoked(token))
                 {
-                    // Cancel authentication
-                    context.User = new ClaimsPrincipal();
+                    context.Response.Headers.WWWAuthenticate = "Bearer error=\"invalid_token\", error_description=\"The token has been revoked or expired\"";
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await context.Response.WriteAsync("The token has been revoked or expired.");
+                    return;
                 }
             }
             await _next(context);
+        }
+
+        private bool IsPublicRoute(string method, string path)
+        {
+            if (_publicRoutes.TryGetValue(method, out var routes))
+            {
+                return routes.Any(route => Regex.IsMatch(path, route));
+            }
+            return false;
         }
     }
 
