@@ -46,7 +46,7 @@ namespace HiTech.Service.AuthAPI.Controllers
         [HttpGet("validate-token")]
         public async Task<ActionResult<ApiResponse>> ValidateToken([FromQuery] string token)
         {
-            if (!await _authService.IsTokenRevoked(token))
+            if (await _authService.IsValidToken(token))
             {
                 return Ok(HiTechApi.ResponseOk());
             }

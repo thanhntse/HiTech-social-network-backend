@@ -29,7 +29,7 @@ namespace HiTech.Service.AuthAPI.Middlewares
             {
                 var token = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
-                if (!string.IsNullOrEmpty(token) && await authService.IsTokenRevoked(token))
+                if (!string.IsNullOrWhiteSpace(token) && (!await authService.IsValidToken(token)))
                 {
                     context.Response.Headers.WWWAuthenticate = "Bearer error=\"invalid_token\", error_description=\"The token has been revoked or expired\"";
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;

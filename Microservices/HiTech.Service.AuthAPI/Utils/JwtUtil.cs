@@ -44,6 +44,33 @@ namespace HiTech.Service.AuthAPI.Utils
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public bool ValidateToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    IssuerSigningKey = securityKey
+                }, out SecurityToken validatedToken);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
         public string GenerateRefreshToken()
         {
             var randomBytes = new byte[64];
@@ -82,7 +109,7 @@ namespace HiTech.Service.AuthAPI.Utils
             var handler = new JwtSecurityTokenHandler();
 
             // Kiểm tra xem token có hợp lệ không
-            if (handler.CanReadToken(token))
+            if (ValidateToken(token) && handler.CanReadToken(token))
             {
                 var jwtToken = handler.ReadJwtToken(token);
 

@@ -18,7 +18,7 @@ namespace HiTech.Service.PostsAPI.Middlewares
         {
             var token = context.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrWhiteSpace(token))
             {
                 HttpClient client = _factory.CreateClient("HiTech");
                 var response = await client.GetAsync($"auth/validate-token?token={token}");

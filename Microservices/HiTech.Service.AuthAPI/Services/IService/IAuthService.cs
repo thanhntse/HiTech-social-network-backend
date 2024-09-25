@@ -8,7 +8,7 @@ namespace HiTech.Service.AuthAPI.Services.IService
         Task<AuthResponse?> Login(LoginRequest login);
         Task<AuthResponse?> RefreshToken(string refreshToken);
         Task<bool> Logout(string id, LogoutRequest request);
-        Task<bool> IsTokenRevoked(string token);
+        Task<bool> IsValidToken(string token);
         Task<AccountResponse?> GetProfile(string id);
     }
 }

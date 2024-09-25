@@ -113,21 +113,23 @@ namespace HiTech.Service.AuthAPI.Services
             return true;
         }
 
-        public async Task<bool> IsTokenRevoked(string token)
+        public async Task<bool> IsValidToken(string token)
         {
             bool result = false;
             try
             {
+                if (!_jwtUtil.ValidateToken(token)) return false;
+
                 var revokedToken = await _unitOfWork.ExpiredTokens.GetByIDAsync(token);
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
                 var expiration = jwtToken.ValidTo;
 
-                result = expiration < DateTime.UtcNow || revokedToken != null;
+                result = expiration > DateTime.UtcNow && revokedToken == null;
             }
             catch (Exception ex)
             {
-                result = true; // error => token invalid
+                result = false; // error => token invalid
                 _logger.LogError(ex, "An error occurred while validate token at {Time}.", DateTime.Now);
             }
 
