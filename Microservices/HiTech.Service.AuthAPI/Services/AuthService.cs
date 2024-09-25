@@ -5,6 +5,7 @@ using HiTech.Service.AuthAPI.Entities;
 using HiTech.Service.AuthAPI.Services.IService;
 using HiTech.Service.AuthAPI.UOW;
 using HiTech.Service.AuthAPI.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiTech.Service.AuthAPI.Services
 {
@@ -109,6 +110,12 @@ namespace HiTech.Service.AuthAPI.Services
             }
 
             return true;
+        }
+
+        public async Task<bool> IsTokenRevoked(string token)
+        {
+            var revokedToken = await _unitOfWork.ExpiredTokens.FindAllAsync(t => t.Token == token);
+            return revokedToken != null;
         }
 
         public async Task<AccountResponse?> GetProfile(string id)
