@@ -1,12 +1,12 @@
 using HiTech.Service.PostsAPI.Data;
+using HiTech.Service.PostsAPI.Extensions;
 using HiTech.Service.PostsAPI.Mapper;
+using HiTech.Service.PostsAPI.Middlewares;
 using HiTech.Service.PostsAPI.Services;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.UOW;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using System.Net.Http.Headers;
 
 namespace HiTech.Service.PostsAPI
 {
@@ -19,48 +19,8 @@ namespace HiTech.Service.PostsAPI
             // Database Context Dependency Injection
             builder.Services.AddDbContext<PostDbContext>(opt => opt.UseSqlServer(builder.Configuration["ConnectionStrings:DBDefault"]));
 
-            //Add JWT
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-                    ClockSkew = TimeSpan.Zero
-                };
-
-                //options.Events = new JwtBearerEvents
-                //{
-                //    OnTokenValidated = async context =>
-                //    {
-                //        var authHeader = context.Request.Headers["Authorization"].ToString();
-
-                //        if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
-                //        {
-                //            var token = authHeader.Substring("Bearer ".Length).Trim();
-                //            var dbContext = context.HttpContext.RequestServices.GetRequiredService<AuthDbContext>();
-                //            bool isTokenRevoked = await dbContext.ExpiredTokens.AnyAsync(rt => rt.Token == token);
-
-                //            if (isTokenRevoked)
-                //            {
-                //                context.Fail("Token is revoked");
-                //            }
-                //        }
-                //    }
-                //};
-            });
+            //Add custom JWT Authentication
+            builder.AddHiTechAuthetication();
             builder.Services.AddAuthorization();
 
             // Add services to the container.
@@ -72,34 +32,17 @@ namespace HiTech.Service.PostsAPI
 
             builder.Services.AddControllers();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
+            builder.Services.AddHttpClient("HiTech", client =>
             {
-                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                    Description = "Enter Bearer Token"
-                });
-                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-                {
-                    {
-                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                        {
-                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                            {
-                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] {}
-                    }
-                });
+                client.BaseAddress = new Uri("http://localhost:8001/api/hitech/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
             });
+
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Custom swagger
+            builder.AddHiTechSwagger();
 
             var app = builder.Build();
 
@@ -115,6 +58,8 @@ namespace HiTech.Service.PostsAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //Add custom middleware
+            app.UseTokenValidation();
 
             app.MapControllers();
 

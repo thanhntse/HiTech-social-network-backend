@@ -43,6 +43,16 @@ namespace HiTech.Service.AuthAPI.Controllers
             return BadRequest(HiTechApi.ResponseNoData(400, "Invalid refresh token."));
         }
 
+        [HttpGet("validate-token")]
+        public async Task<ActionResult<ApiResponse>> ValidateToken([FromQuery] string token)
+        {
+            if (!await _authService.IsTokenRevoked(token))
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseNoData(400, "Invalid token."));
+        }
+
         [Authorize]
         [HttpPost("logout")]
         public async Task<ActionResult<ApiResponse>> Logout([FromBody] LogoutRequest request)
