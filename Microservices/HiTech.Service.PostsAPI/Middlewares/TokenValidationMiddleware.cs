@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
 
 namespace HiTech.Service.PostsAPI.Middlewares
 {
@@ -25,9 +26,8 @@ namespace HiTech.Service.PostsAPI.Middlewares
                 var response = await client.GetAsync($"auth/validate-token?token={token}");
                 if (!response.IsSuccessStatusCode)
                 {
-                    context.Response.StatusCode = 401;
-                    await context.Response.WriteAsync("Token has revoked.");
-                    return;
+                    // Cancel authentication
+                    context.User = new ClaimsPrincipal();
                 }
             }
             await _next(context);

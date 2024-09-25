@@ -6,6 +6,7 @@ using HiTech.Service.AuthAPI.Services.IService;
 using HiTech.Service.AuthAPI.UOW;
 using HiTech.Service.AuthAPI.Utils;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace HiTech.Service.AuthAPI.Services
 {
@@ -114,8 +115,11 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<bool> IsTokenRevoked(string token)
         {
-            var revokedToken = await _unitOfWork.ExpiredTokens.FindAllAsync(t => t.Token == token);
-            return revokedToken != null;
+            var revokedToken = await _unitOfWork.ExpiredTokens.GetByIDAsync(token);
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            var expiration = jwtToken.ValidTo;
+            return expiration < DateTime.UtcNow || revokedToken != null;
         }
 
         public async Task<AccountResponse?> GetProfile(string id)

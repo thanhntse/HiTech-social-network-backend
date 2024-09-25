@@ -1,19 +1,18 @@
 ﻿using HiTech.Service.AuthAPI.Services.IService;
+using System.Security.Claims;
 
 namespace HiTech.Service.AuthAPI.Middlewares
 {
     public class TokenValidationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IAuthService _authService;
 
-        public TokenValidationMiddleware(RequestDelegate next, IAuthService authService)
+        public TokenValidationMiddleware(RequestDelegate next)
         {
             _next = next;
-            _authService = authService;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IAuthService authService)
         {
             var authHeader = context.Request.Headers.Authorization.ToString();
 
@@ -21,11 +20,10 @@ namespace HiTech.Service.AuthAPI.Middlewares
             {
                 var token = authHeader.Substring("Bearer ".Length).Trim();
 
-                if (await _authService.IsTokenRevoked(token))
+                if (await authService.IsTokenRevoked(token))
                 {
-                    context.Response.StatusCode = 401;
-                    await context.Response.WriteAsync("Token has revoked.");
-                    return;
+                    // Cancel authentication
+                    context.User = new ClaimsPrincipal();
                 }
             }
             await _next(context);

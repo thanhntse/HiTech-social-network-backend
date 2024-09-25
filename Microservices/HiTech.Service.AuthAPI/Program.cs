@@ -51,10 +51,10 @@ namespace HiTech.Service.AuthAPI
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
-            app.UseAuthorization();
-
             // Custom middleware check token revoked
             app.UseTokenValidation();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 

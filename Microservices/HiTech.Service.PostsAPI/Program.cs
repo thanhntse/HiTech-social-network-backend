@@ -56,10 +56,10 @@ namespace HiTech.Service.PostsAPI
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
-            app.UseAuthorization();
-
             //Add custom middleware
             app.UseTokenValidation();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 
