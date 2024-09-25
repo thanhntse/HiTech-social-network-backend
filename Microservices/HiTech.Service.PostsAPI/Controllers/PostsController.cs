@@ -75,7 +75,7 @@ namespace HiTech.Service.PostsAPI.Controllers
 
             if (post == null)
             {
-                return NotFound(HiTechApi.ResponseBadRequest());
+                return BadRequest(HiTechApi.ResponseBadRequest());
             }
             var response = HiTechApi.Response(201, "Created.", post);
             return CreatedAtAction("GetPost",

@@ -29,6 +29,8 @@ namespace HiTech.Service.PostsAPI
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddScoped<IPostService, PostService>();
+            builder.Services.AddScoped<ILikeService, LikeService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
 
             builder.Services.AddControllers();
 
