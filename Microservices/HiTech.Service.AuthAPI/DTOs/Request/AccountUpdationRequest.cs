@@ -6,5 +6,7 @@
         public string? Bio { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
+        public string? Avatar { get; set; }
+        public string? Background { get; set; }
     }
 }
