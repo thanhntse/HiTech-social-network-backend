@@ -1,4 +1,6 @@
-﻿using HiTech.Service.PostsAPI.Entities;
+﻿using AutoMapper;
+using HiTech.Service.PostsAPI.DTOs.Response;
+using HiTech.Service.PostsAPI.Entities;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.UOW;
 using Microsoft.EntityFrameworkCore;
@@ -8,12 +10,14 @@ namespace HiTech.Service.PostsAPI.Services
     public class LikeService : ILikeService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly ILogger<LikeService> _logger;
 
-        public LikeService(ILogger<LikeService> logger, IUnitOfWork unitOfWork)
+        public LikeService(ILogger<LikeService> logger, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<bool> CreateAsync(string authorId, int postId)
@@ -84,10 +88,13 @@ namespace HiTech.Service.PostsAPI.Services
             return result;
         }
 
-        public async Task<IEnumerable<int>> GetAllAuthorIDByPostIDAsync(int postId)
+        public async Task<IEnumerable<UserResponse>> GetAllUserByPostIDAsync(int postId)
         {
-            var likes = await _unitOfWork.Likes.FindAllAsync(l => l.PostId == postId);
-            return likes.Select(l => l.AuthorId).ToList();
+            var users = await _unitOfWork.Likes.FindAll(l => l.PostId == postId)
+                                               .Include(l => l.User)
+                                               .Select(l => l.User)
+                                               .ToListAsync();
+            return _mapper.Map<IEnumerable<UserResponse>>(users);
         }
 
         public async Task<bool> LikeExists(string authorId, int postId)

@@ -4,6 +4,7 @@ using HiTech.Service.PostsAPI.DTOs.Response;
 using HiTech.Service.PostsAPI.Entities;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.UOW;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiTech.Service.PostsAPI.Services
 {
@@ -90,13 +91,17 @@ namespace HiTech.Service.PostsAPI.Services
 
         public async Task<IEnumerable<CommentReponse>> GetAllByPostIDAsync(int id)
         {
-            var comments = await _unitOfWork.Comments.FindAllAsync(c => c.PostId == id);
+            var comments = await _unitOfWork.Comments.FindAll(c => c.PostId == id)
+                                                     .Include(c => c.User)
+                                                     .ToListAsync();
             return _mapper.Map<IEnumerable<CommentReponse>>(comments);
         }
 
         public async Task<CommentReponse?> GetByIDAsync(int id)
         {
-            var comment = await _unitOfWork.Comments.GetByIDAsync(id);
+            var comment = await _unitOfWork.Comments.FindAll(c => c.CommentId == id)
+                                                    .Include(c => c.User)
+                                                    .ToListAsync();
 
             if (comment == null)
             {

@@ -10,7 +10,7 @@
         public DateTime? PublishedAt { get; set; }
         public int Like { get; set; } = 0;
         public int CommentsCount { get; set; } = 0;
-        public int AuthorId { get; set; }
+        public virtual UserResponse User { get; set; } = null!;
         public virtual ICollection<ImageResponse> Images { get; set; } = new List<ImageResponse>();
     }
 }

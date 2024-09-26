@@ -20,9 +20,13 @@ namespace HiTech.Service.PostsAPI.Repositories
         }
 
         public async Task<IEnumerable<Post>> GetAllWithImageAsync()
-            => await _dbSet.Include(p => p.Images).ToListAsync();
+            => await _dbSet.Include(p => p.Images)
+                           .Include(p => p.User)
+                           .ToListAsync();
 
         public async Task<Post?> GetByIDWithImageAsync(int id)
-            => await _dbSet.Include(p => p.Images).FirstOrDefaultAsync(i => i.PostId == id);
+            => await _dbSet.Include(p => p.Images)
+                           .Include(p => p.User)
+                           .FirstOrDefaultAsync(i => i.PostId == id);
     }
 }

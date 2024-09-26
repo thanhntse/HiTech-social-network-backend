@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Shared.Controllers;
 using System.Security.Claims;
+using HiTech.Service.PostsAPI.DTOs.Response;
 
 namespace HiTech.Service.PostsAPI.Controllers
 {
@@ -22,14 +23,14 @@ namespace HiTech.Service.PostsAPI.Controllers
 
         // GET: api/hitech/likes/post/5
         [HttpGet("post/{id}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<int>>>> GetAllAuthorIDByPostID(int id)
+        public async Task<ActionResult<ApiResponse<IEnumerable<UserResponse>>>> GetAllAuthorIDByPostID(int id)
         {
             if (!await _postService.PostExists(id))
             {
                 return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            var authors = await _likeService.GetAllAuthorIDByPostIDAsync(id);
+            var authors = await _likeService.GetAllUserByPostIDAsync(id);
             return Ok(HiTechApi.ResponseOk(authors));
         }
 
