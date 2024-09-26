@@ -39,6 +39,16 @@ namespace HiTech.Service.AuthAPI.Data
                 .WithMany(a => a.ExpiredTokens)
                 .HasForeignKey(rt => rt.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Account>()
+                .ToTable(b =>
+                {
+                    b.HasCheckConstraint("CK_Email_Length", "LEN([email]) >= 6");
+                    b.HasCheckConstraint("CK_Email_Valid", "CHARINDEX('@', [email]) > 0");
+                    b.HasCheckConstraint("CK_Phone_Valid", "LEN([phone]) = 10");
+                    b.HasCheckConstraint("CK_Fullname_Length", "LEN([full_name]) >= 6");
+                    b.HasCheckConstraint("CK_Role_Valid", "[role] IN ('Member', 'Admin')");
+                });
         }
     }
 }

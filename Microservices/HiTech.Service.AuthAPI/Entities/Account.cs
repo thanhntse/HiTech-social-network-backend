@@ -13,23 +13,21 @@ namespace HiTech.Service.AuthAPI.Entities
         public int AccountId { get; set; }
 
         [Column("email")]
-        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [MaxLength(30)]
         public string Email { get; set; } = null!;
 
         [Column("password")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; } = null!;
 
         [Column("full_name")]
-        [MinLength(6, ErrorMessage = "Full name must be at least 6 characters long.")]
+        [MaxLength(50)]
         public string FullName { get; set; } = null!;
 
         [Column("bio")]
         public string? Bio { get; set; }
 
         [Column("phone")]
-        [StringLength(10, MinimumLength = 10, ErrorMessage = "Phone number must be exactly 10 digits.")]
-        [RegularExpression(@"^0\d{9}$", ErrorMessage = "Phone number must start with 0 and be 10 digits long.")]
+        [MaxLength(10)]
         public string? Phone { get; set; }
 
         [Column("address")]
@@ -45,7 +43,6 @@ namespace HiTech.Service.AuthAPI.Entities
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Column("role")]
-        [RegularExpression("^(Member|Admin)$", ErrorMessage = "Role must be either 'Member' or 'Admin'.")]
         public string Role { get; set; } = "Member";
 
         [Column("is_deleted")]
