@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HiTech.Service.PostsAPI.Data;
-using HiTech.Service.PostsAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.DTOs.Response;
 using HiTech.Shared.Controllers;
-using Azure.Core;
 using HiTech.Service.PostsAPI.DTOs.Request;
 using System.Security.Claims;
 

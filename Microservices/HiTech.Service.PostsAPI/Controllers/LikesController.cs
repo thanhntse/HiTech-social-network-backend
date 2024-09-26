@@ -49,6 +49,11 @@ namespace HiTech.Service.PostsAPI.Controllers
                 return Unauthorized(HiTechApi.ResponseUnauthorized());
             }
 
+            if (await _likeService.LikeExists(accountId, id))
+            {
+                return BadRequest(HiTechApi.ResponseNoData(400, "Already like."));
+            }
+
             bool success = await _likeService.CreateAsync(accountId, id);
             if (success)
             {
@@ -70,6 +75,11 @@ namespace HiTech.Service.PostsAPI.Controllers
             if (accountId == null)
             {
                 return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            if (!await _likeService.LikeExists(accountId, id))
+            {
+                return BadRequest(HiTechApi.ResponseNoData(400, "Didn't like yet."));
             }
 
             bool success = await _likeService.DeleteAsync(accountId, id);

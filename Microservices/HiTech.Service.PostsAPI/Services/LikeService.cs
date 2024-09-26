@@ -27,8 +27,19 @@ namespace HiTech.Service.PostsAPI.Services
             bool result;
             try
             {
-                await _unitOfWork.Likes.CreateAsync(like);
-                result = await _unitOfWork.SaveAsync() > 0;
+                result = await _unitOfWork.SaveWithTransactionAsync(async () =>
+                {
+                    await _unitOfWork.Likes.CreateAsync(like);
+
+                    // update like in post
+                    var post = await _unitOfWork.Posts.GetByIDAsync(postId);
+                    // post != null is already check in LikesController
+                    if (post != null)
+                    {
+                        post.Like++;
+                        _unitOfWork.Posts.Update(post);
+                    }
+                }) > 0;
             }
             catch (Exception ex)
             {
@@ -50,8 +61,19 @@ namespace HiTech.Service.PostsAPI.Services
             {
                 try
                 {
-                    _unitOfWork.Likes.Delete(like);
-                    result = await _unitOfWork.SaveAsync() > 0;
+                    result = await _unitOfWork.SaveWithTransactionAsync(async () =>
+                    {
+                        _unitOfWork.Likes.Delete(like);
+
+                        // update like in post
+                        var post = await _unitOfWork.Posts.GetByIDAsync(postId);
+                        // post != null is already check in LikesController
+                        if (post != null)
+                        {
+                            post.Like--;
+                            _unitOfWork.Posts.Update(post);
+                        }
+                    }) > 0;
                 }
                 catch (Exception ex)
                 {
@@ -66,6 +88,15 @@ namespace HiTech.Service.PostsAPI.Services
         {
             var likes = await _unitOfWork.Likes.FindAllAsync(l => l.PostId == postId);
             return likes.Select(l => l.AuthorId).ToList();
+        }
+
+        public async Task<bool> LikeExists(string authorId, int postId)
+        {
+            var like = await _unitOfWork.Likes.FindAll(
+                    l => l.AuthorId == Int32.Parse(authorId)
+                    && l.PostId == postId
+                ).FirstOrDefaultAsync();
+            return like != null;
         }
     }
 }

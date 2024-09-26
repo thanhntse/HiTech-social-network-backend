@@ -4,7 +4,6 @@ using HiTech.Service.PostsAPI.DTOs.Response;
 using HiTech.Service.PostsAPI.Entities;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.UOW;
-using Microsoft.Extensions.Hosting;
 
 namespace HiTech.Service.PostsAPI.Services
 {
@@ -32,11 +31,22 @@ namespace HiTech.Service.PostsAPI.Services
             var comment = _mapper.Map<Comment>(request);
             comment.AuthorId = Int32.Parse(authorId);
 
-            Comment? response;
+            Comment? response = new();
             try
             {
-                response = await _unitOfWork.Comments.CreateAsync(comment);
-                await _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveWithTransactionAsync(async () =>
+                {
+                    response = await _unitOfWork.Comments.CreateAsync(comment);
+
+                    // update comment count in post
+                    var post = await _unitOfWork.Posts.GetByIDAsync(comment.PostId);
+                    // post != null already check in CommentsController
+                    if (post != null)
+                    {
+                        post.CommentsCount++;
+                        _unitOfWork.Posts.Update(post);
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -55,8 +65,19 @@ namespace HiTech.Service.PostsAPI.Services
             {
                 try
                 {
-                    _unitOfWork.Comments.Delete(comment);
-                    result = await _unitOfWork.SaveAsync() > 0;
+                    result = await _unitOfWork.SaveWithTransactionAsync(async () =>
+                    {
+                        _unitOfWork.Comments.Delete(comment);
+
+                        // update comment count in post
+                        var post = await _unitOfWork.Posts.GetByIDAsync(comment.PostId);
+                        // post != null already check in CommentsController
+                        if (post != null)
+                        {
+                            post.CommentsCount--;
+                            _unitOfWork.Posts.Update(post);
+                        }
+                    }) > 0;
                 }
                 catch (Exception ex)
                 {
