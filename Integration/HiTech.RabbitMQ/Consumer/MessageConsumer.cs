@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using HiTech.RabbitMQ.Settings;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace HiTech.RabbitMQ.Consumer
@@ -14,10 +15,10 @@ namespace HiTech.RabbitMQ.Consumer
         {
             var factory = new ConnectionFactory
             {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/"
+                HostName = RabbitMQSettings.HostName,
+                UserName = RabbitMQSettings.UserName,
+                Password = RabbitMQSettings.Password,
+                VirtualHost = RabbitMQSettings.VirtualHost
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();

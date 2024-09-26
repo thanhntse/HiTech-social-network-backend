@@ -2,6 +2,6 @@
 {
     public interface IMessagePublisher : IDisposable
     {
-        void Publish(string queueName, string message);
+        void Publish<T>(string queueName, T message);
     }
 }

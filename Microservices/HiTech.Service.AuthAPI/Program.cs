@@ -7,6 +7,7 @@ using HiTech.Service.AuthAPI.Utils;
 using HiTech.Service.AuthAPI.UOW;
 using HiTech.Service.AuthAPI.Extensions;
 using HiTech.Service.AuthAPI.Middlewares;
+using HiTech.RabbitMQ.Publisher;
 
 namespace HiTech.Service.AuthAPI
 {
@@ -24,6 +25,8 @@ namespace HiTech.Service.AuthAPI
             builder.Services.AddAuthorization();
 
             // Add services to the container.
+            builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
+
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
             builder.Services.AddScoped<JwtUtil>();

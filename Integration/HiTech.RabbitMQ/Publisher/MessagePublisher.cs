@@ -1,5 +1,7 @@
-﻿using RabbitMQ.Client;
+﻿using HiTech.RabbitMQ.Settings;
+using RabbitMQ.Client;
 using System.Text;
+using System.Text.Json;
 
 namespace HiTech.RabbitMQ.Publisher
 {
@@ -14,16 +16,16 @@ namespace HiTech.RabbitMQ.Publisher
         {
             var factory = new ConnectionFactory
             {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/"
+                HostName = RabbitMQSettings.HostName,
+                UserName = RabbitMQSettings.UserName,
+                Password = RabbitMQSettings.Password,
+                VirtualHost = RabbitMQSettings.VirtualHost
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
         }
 
-        public void Publish(string queueName, string message)
+        public void Publish<T>(string queueName, T message)
         {
             _channel.QueueDeclare(queue: queueName,
                              durable: true,
@@ -31,7 +33,8 @@ namespace HiTech.RabbitMQ.Publisher
                              autoDelete: false,
                              arguments: null);
 
-            var body = Encoding.UTF8.GetBytes(message);
+            var json = JsonSerializer.Serialize(message);
+            var body = Encoding.UTF8.GetBytes(json);
 
             _channel.BasicPublish(exchange: "",
                              routingKey: queueName,

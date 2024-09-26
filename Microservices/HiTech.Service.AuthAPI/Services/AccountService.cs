@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using HiTech.RabbitMQ.Publisher;
+using HiTech.Service.AuthAPI.DTOs.Message;
 using HiTech.Service.AuthAPI.DTOs.Request;
 using HiTech.Service.AuthAPI.DTOs.Response;
 using HiTech.Service.AuthAPI.Entities;
 using HiTech.Service.AuthAPI.Services.IService;
 using HiTech.Service.AuthAPI.UOW;
 using HiTech.Service.AuthAPI.Utils;
+using HiTech.Shared.Constant;
 
 namespace HiTech.Service.AuthAPI.Services
 {
@@ -12,13 +15,16 @@ namespace HiTech.Service.AuthAPI.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMessagePublisher _messagePublisher;
         private readonly ILogger<AccountService> _logger;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AccountService> logger)
+        public AccountService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AccountService> logger,
+            IMessagePublisher messagePublisher)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _messagePublisher = messagePublisher;
         }
 
         public async Task<bool> AccountExists(int id)
@@ -49,7 +55,12 @@ namespace HiTech.Service.AuthAPI.Services
                 _logger.LogError(ex, "An error occurred while creating the account at {Time}.", DateTime.Now);
                 return null;
             }
+            // Add success => send message
+            var message = _mapper.Map<UserMessage>(response);
+            _messagePublisher.Publish(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, message);
+            _logger.LogInformation("Create account successfully, message sent at {Time}.", DateTime.Now);
 
+            // Return to controller
             return _mapper.Map<AccountResponse>(response);
         }
 
@@ -72,6 +83,13 @@ namespace HiTech.Service.AuthAPI.Services
                 }
             }
 
+            if (result)
+            {
+                // Delete success => send message
+                _messagePublisher.Publish(MessageQueueConstants.USER_DELETE_QUEUE, id);
+                _logger.LogInformation("Delete account successfully, message sent at {Time}.", DateTime.Now);
+            }
+            // Return to controller
             return result;
         }
 
@@ -126,6 +144,14 @@ namespace HiTech.Service.AuthAPI.Services
                 }
             }
 
+            if (result)
+            {
+                // Update success => send message
+                var message = _mapper.Map<UserMessage>(account);
+                _messagePublisher.Publish(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, message);
+                _logger.LogInformation("Update account successfully, message sent at {Time}.", DateTime.Now);
+            }
+            // Return to controller
             return result;
         }
     }

@@ -11,6 +11,8 @@ namespace HiTech.Service.PostsAPI.Mapper
         {
             CreateMap<CommentRequest, Comment>();
             CreateMap<Comment, CommentReponse>();
+
+            CreateMap<User, User>();
             CreateMap<User, UserResponse>();
 
             CreateMap<PostRequest, Post>()

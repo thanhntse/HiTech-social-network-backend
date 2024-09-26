@@ -12,6 +12,7 @@ namespace HiTech.Service.PostsAPI.UOW
         public ICommentRepository Comments { get; private set; }
         public ILikeRepository Likes { get; private set; }
         public IImageRepository Images { get; private set; }
+        public IUserRepository Users { get; private set; }
 
         public UnitOfWork(PostDbContext context)
         {
@@ -20,6 +21,7 @@ namespace HiTech.Service.PostsAPI.UOW
             Comments = new CommentRepository(context);
             Likes = new LikeRepository(context);
             Images = new ImageRepository(context);
+            Users = new UserRepository(context);
         }
 
         public async Task<int> SaveAsync()

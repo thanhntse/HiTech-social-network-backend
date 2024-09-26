@@ -1,8 +1,10 @@
+using HiTech.RabbitMQ.Consumer;
 using HiTech.Service.PostsAPI.Data;
 using HiTech.Service.PostsAPI.Extensions;
 using HiTech.Service.PostsAPI.Mapper;
 using HiTech.Service.PostsAPI.Middlewares;
 using HiTech.Service.PostsAPI.Services;
+using HiTech.Service.PostsAPI.Services.BackgroundServices;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.UOW;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,10 @@ namespace HiTech.Service.PostsAPI
             builder.Services.AddAuthorization();
 
             // Add services to the container.
+            builder.Services.AddSingleton<IMessageConsumer, MessageConsumer>();
+            builder.Services.AddHostedService<UserCreateUpdateService>();
+            builder.Services.AddHostedService<UserDeleteService>();
+
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

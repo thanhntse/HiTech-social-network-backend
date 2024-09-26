@@ -8,6 +8,7 @@ namespace HiTech.Service.PostsAPI.UOW
         ICommentRepository Comments { get; }
         ILikeRepository Likes { get; }
         IImageRepository Images { get; }
+        IUserRepository Users { get; }
         Task<int> SaveAsync();
         Task<int> SaveWithTransactionAsync();
         Task<int> SaveWithTransactionAsync(Func<Task> operation);
