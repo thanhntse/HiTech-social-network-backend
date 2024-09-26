@@ -11,15 +11,15 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
     public class UserCreateUpdateService : BackgroundService
     {
         private readonly IMessageConsumer _messageConsumer;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IMapper _mapper;
         private readonly ILogger<UserCreateUpdateService> _logger;
 
-        public UserCreateUpdateService(IMessageConsumer messageConsumer, IUnitOfWork unitOfWork,
+        public UserCreateUpdateService(IMessageConsumer messageConsumer, IServiceProvider serviceProvider,
             ILogger<UserCreateUpdateService> logger, IMapper mapper)
         {
             _messageConsumer = messageConsumer;
-            _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
             _logger = logger;
             _mapper = mapper;
         }
@@ -28,7 +28,7 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
         {
             _messageConsumer.CreateConsumer(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, async (model, ea) =>
             {
-                _logger.LogInformation("Message received at {Time}.", DateTime.Now);
+                _logger.LogInformation("========Message received at {Time}.========", DateTime.Now);
                 try
                 {
                     var body = ea.Body.ToArray();
@@ -40,19 +40,23 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
 
                     if (user != null)
                     {
-                        var existUser = await _unitOfWork.Users.GetByIDAsync(user.UserId);
-                        if (existUser == null)
+                        using (var scope = _serviceProvider.CreateScope())
                         {
-                            // Create the new one
-                            await _unitOfWork.Users.CreateAsync(user);
-                            await _unitOfWork.SaveAsync();
-                        }
-                        else
-                        {
-                            //Update user
-                            _mapper.Map(user, existUser);
-                            _unitOfWork.Users.Update(existUser);
-                            await _unitOfWork.SaveAsync();
+                            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                            var existUser = await unitOfWork.Users.GetByIDAsync(user.UserId);
+                            if (existUser == null)
+                            {
+                                // Create the new one
+                                await unitOfWork.Users.CreateAsync(user);
+                                await unitOfWork.SaveAsync();
+                            }
+                            else
+                            {
+                                //Update user
+                                _mapper.Map(user, existUser);
+                                unitOfWork.Users.Update(existUser);
+                                await unitOfWork.SaveAsync();
+                            }
                         }
                     }
                 }

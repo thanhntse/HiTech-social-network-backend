@@ -8,14 +8,14 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
     public class UserDeleteService : BackgroundService
     {
         private readonly IMessageConsumer _messageConsumer;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<UserCreateUpdateService> _logger;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<UserDeleteService> _logger;
 
-        public UserDeleteService(IMessageConsumer messageConsumer, IUnitOfWork unitOfWork,
-            ILogger<UserCreateUpdateService> logger)
+        public UserDeleteService(IMessageConsumer messageConsumer, IServiceProvider serviceProvider,
+            ILogger<UserDeleteService> logger)
         {
             _messageConsumer = messageConsumer;
-            _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
             _logger = logger;
         }
 
@@ -23,7 +23,7 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
         {
             _messageConsumer.CreateConsumer(MessageQueueConstants.USER_DELETE_QUEUE, async (model, ea) =>
             {
-                _logger.LogInformation("Message received at {Time}.", DateTime.Now);
+                _logger.LogInformation("========Message received at {Time}.========", DateTime.Now);
                 try
                 {
                     var body = ea.Body.ToArray();
@@ -33,12 +33,16 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
 
                     var userId = Int32.Parse(json);
 
-                    var user = await _unitOfWork.Users.GetByIDAsync(userId);
-
-                    if (user != null)
+                    using (var scope = _serviceProvider.CreateScope())
                     {
-                        _unitOfWork.Users.Delete(user);
-                        await _unitOfWork.SaveAsync();
+                        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                        var user = await unitOfWork.Users.GetByIDAsync(userId);
+
+                        if (user != null)
+                        {
+                            unitOfWork.Users.Delete(user);
+                            await unitOfWork.SaveAsync();
+                        }
                     }
                 }
                 catch (Exception ex)

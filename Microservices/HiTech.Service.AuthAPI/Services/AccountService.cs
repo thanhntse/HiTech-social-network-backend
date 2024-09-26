@@ -58,7 +58,7 @@ namespace HiTech.Service.AuthAPI.Services
             // Add success => send message
             var message = _mapper.Map<UserMessage>(response);
             _messagePublisher.Publish(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, message);
-            _logger.LogInformation("Create account successfully, message sent at {Time}.", DateTime.Now);
+            _logger.LogInformation("========Create account successfully, message sent at {Time}.=========", DateTime.Now);
 
             // Return to controller
             return _mapper.Map<AccountResponse>(response);
@@ -87,7 +87,7 @@ namespace HiTech.Service.AuthAPI.Services
             {
                 // Delete success => send message
                 _messagePublisher.Publish(MessageQueueConstants.USER_DELETE_QUEUE, id);
-                _logger.LogInformation("Delete account successfully, message sent at {Time}.", DateTime.Now);
+                _logger.LogInformation("========Delete account successfully, message sent at {Time}.========", DateTime.Now);
             }
             // Return to controller
             return result;
@@ -149,7 +149,7 @@ namespace HiTech.Service.AuthAPI.Services
                 // Update success => send message
                 var message = _mapper.Map<UserMessage>(account);
                 _messagePublisher.Publish(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, message);
-                _logger.LogInformation("Update account successfully, message sent at {Time}.", DateTime.Now);
+                _logger.LogInformation("========Update account successfully, message sent at {Time}.========", DateTime.Now);
             }
             // Return to controller
             return result;
