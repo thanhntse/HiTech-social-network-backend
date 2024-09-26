@@ -1,8 +1,7 @@
 ﻿namespace HiTech.RabbitMQ.Publisher
 {
-    public interface IMessagePublisher<TMessage>
-        where TMessage : class, new()
+    public interface IMessagePublisher : IDisposable
     {
-        void Publish(string queueName, TMessage message);
+        void Publish(string queueName, string message);
     }
 }

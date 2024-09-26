@@ -1,47 +1,66 @@
-﻿using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
-using System.Text;
-using System.Text.Json;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace HiTech.RabbitMQ.Consumer
 {
-    public class MessageConsumer<TMessage, TProcessMethod> : IMessageConsumer<TMessage, TProcessMethod>
-        where TMessage : class, new()
-        where TProcessMethod : class, new()
+    public class MessageConsumer : IMessageConsumer
     {
+        private bool _disposed = false;
+
         private readonly IConnection _connection;
         private readonly IModel _channel;
-        private readonly Func<TProcessMethod, TMessage, Task> _processMethod;
 
-        public MessageConsumer(string hostName, string queueName, Func<TProcessMethod, TMessage, Task> processMethod)
+        public MessageConsumer()
         {
-            var factory = new ConnectionFactory() { HostName = hostName };
+            var factory = new ConnectionFactory
+            {
+                HostName = "localhost",
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/"
+            };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-
-            _channel.QueueDeclare(queue: queueName,
-                                 durable: false,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
-
-            _processMethod = processMethod;
-
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += OnMessageReceived;
-            _channel.BasicConsume(queue: queueName,
-                                 autoAck: true,
-                                 consumer: consumer);
         }
 
-        private async void OnMessageReceived(object sender, BasicDeliverEventArgs e)
+        public void CreateConsumer(string queueName, EventHandler<BasicDeliverEventArgs> receivedHandler)
         {
-            var body = e.Body.ToArray();
-            var json = Encoding.UTF8.GetString(body);
-            var message = JsonSerializer.Deserialize<TMessage>(json);
+            _channel.QueueDeclare(queue: queueName,
+                                  durable: true,
+                                  exclusive: false,
+                                  autoDelete: false,
+                                  arguments: null);
 
-            // Gọi phương thức xử lý
-            await _processMethod(default(TProcessMethod), message);
+            var consumer = new EventingBasicConsumer(_channel);
+
+            consumer.Received += receivedHandler;
+
+            _channel.BasicConsume(queue: queueName,
+                                  autoAck: true,
+                                  consumer: consumer);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this); // Ngăn GC gọi finalizer
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Giải phóng các tài nguyên quản lý
+                    _channel?.Close();
+                    _connection?.Close();
+                }
+
+                // Giải phóng tài nguyên không quản lý (nếu có)
+
+                _disposed = true;
+            }
         }
     }
 }

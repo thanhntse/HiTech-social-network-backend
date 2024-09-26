@@ -1,8 +1,9 @@
-﻿namespace HiTech.RabbitMQ.Consumer
+﻿using RabbitMQ.Client.Events;
+
+namespace HiTech.RabbitMQ.Consumer
 {
-    public interface IMessageConsumer<TMessage, TProcessMethod>
-        where TMessage : class, new()
-        where TProcessMethod : class, new()
+    public interface IMessageConsumer : IDisposable
     {
+        void CreateConsumer(string queueName, EventHandler<BasicDeliverEventArgs> receivedHandler);
     }
 }
