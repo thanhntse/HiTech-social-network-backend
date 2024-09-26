@@ -29,6 +29,8 @@ namespace HiTech.Service.PostsAPI.Entities
         [Column("post_id")]
         public int PostId { get; set; }
 
+        public virtual User User { get; set; } = null!;
+
         public virtual Post Post { get; set; } = null!;
     }
 }

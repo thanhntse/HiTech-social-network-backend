@@ -39,6 +39,8 @@ namespace HiTech.Service.PostsAPI.Entities
         [Column("author_id")]
         public int AuthorId { get; set; }
 
+        public virtual User User { get; set; } = null!;
+
         public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
         public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
