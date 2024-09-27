@@ -1,4 +1,5 @@
 using HiTech.RabbitMQ.Consumer;
+using HiTech.RabbitMQ.Publisher;
 using HiTech.Service.PostsAPI.Data;
 using HiTech.Service.PostsAPI.Extensions;
 using HiTech.Service.PostsAPI.Mapper;
@@ -26,6 +27,7 @@ namespace HiTech.Service.PostsAPI
             builder.Services.AddAuthorization();
 
             // Add services to the container.
+            builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
             builder.Services.AddSingleton<IMessageConsumer, MessageConsumer>();
             builder.Services.AddHostedService<UserCreateUpdateService>();
             builder.Services.AddHostedService<UserDeleteService>();

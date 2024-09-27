@@ -61,15 +61,22 @@ namespace HiTech.Service.PostsAPI.Services
                 // Add success => send message
                 var user = await _unitOfWork.Users.GetByIDAsync(like.AuthorId);
                 var post = await _unitOfWork.Posts.GetByIDAsync(like.PostId);
-                // Notification
-                var notification = new NotificationMessage
+                if (user?.UserId != post?.AuthorId)
                 {
-                    Type = NotificationType.LIKE_CREATION,
-                    Content = user?.FullName + NotificationContent.LIKE_CREATION,
-                    UserId = post?.AuthorId
-                };
-                _messagePublisher.Publish(MessageQueueConstants.NOTI_CREATE_QUEUE, notification);
-                _logger.LogInformation("========Create like successfully, notification message sent at {Time}.=========", DateTime.Now);
+                    // Notification
+                    var notification = new NotificationMessage
+                    {
+                        Type = NotificationType.LIKE_CREATION,
+                        Content = user?.FullName + NotificationContent.LIKE_CREATION,
+                        UserId = post?.AuthorId
+                    };
+                    _messagePublisher.Publish(MessageQueueConstants.NOTI_CREATE_QUEUE, notification);
+                    _logger.LogInformation("========Create like successfully, notification message sent at {Time}.=========", DateTime.Now);
+                }
+                else
+                {
+                    _logger.LogInformation("========Create like successfully, like yourself at {Time}.=========", DateTime.Now);
+                }
             }
             return result;
         }

@@ -63,16 +63,22 @@ namespace HiTech.Service.PostsAPI.Services
             // Add success => send message
             var user = await _unitOfWork.Users.GetByIDAsync(comment.AuthorId);
             var post = await _unitOfWork.Posts.GetByIDAsync(comment.PostId);
-            // Notification
-            var notification = new NotificationMessage
+            if (user?.UserId != post?.AuthorId)
             {
-                Type = NotificationType.COMMENT_CREATION,
-                Content = user?.FullName + NotificationContent.COMMENT_CREATION,
-                UserId = post?.AuthorId
-            };
-            _messagePublisher.Publish(MessageQueueConstants.NOTI_CREATE_QUEUE, notification);
-            _logger.LogInformation("========Create comment successfully, notification message sent at {Time}.=========", DateTime.Now);
-
+                // Notification
+                var notification = new NotificationMessage
+                {
+                    Type = NotificationType.COMMENT_CREATION,
+                    Content = user?.FullName + NotificationContent.COMMENT_CREATION,
+                    UserId = post?.AuthorId
+                };
+                _messagePublisher.Publish(MessageQueueConstants.NOTI_CREATE_QUEUE, notification);
+                _logger.LogInformation("========Create comment successfully, notification message sent at {Time}.=========", DateTime.Now);
+            }
+            else
+            {
+                _logger.LogInformation("========Create comment successfully, comment yourself at {Time}.=========", DateTime.Now);
+            }
             // Return to controller
             return _mapper.Map<CommentReponse>(response);
         }
