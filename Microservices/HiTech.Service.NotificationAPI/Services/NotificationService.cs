@@ -38,6 +38,27 @@ namespace HiTech.Service.NotificationAPI.Services
             return _mapper.Map<NotificationResponse>(response);
         }
 
+        public async Task<bool> DeleteAllByUserIDAsync(int id)
+        {
+            bool result = false;
+            var notis = await _unitOfWork.Notifications.FindAllAsync(n => n.UserId == id);
+
+            if (notis != null && notis.Any())
+            {
+                try
+                {
+                    _unitOfWork.Notifications.DeleteRange(notis);
+                    result = await _unitOfWork.SaveAsync() > 0;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while deleting the notification at {Time}.", DateTime.Now);
+                    result = false;
+                }
+            }
+            return result;
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             bool result = false;

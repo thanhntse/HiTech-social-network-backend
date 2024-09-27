@@ -28,7 +28,6 @@ namespace HiTech.Service.NotificationAPI
             // Add services to the container.
             builder.Services.AddSingleton<IMessageConsumer, MessageConsumer>();
             builder.Services.AddHostedService<NotificationCreateService>();
-            builder.Services.AddHostedService<NotificationDeleteService>();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 

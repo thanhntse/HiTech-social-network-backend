@@ -9,6 +9,7 @@ namespace HiTech.Service.NotificationAPI.Services.IService
         Task<NotificationResponse?> GetByIDAsync(int id);
         Task<NotificationResponse?> CreateAsync(NotificationRequest request);
         Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAllByUserIDAsync(int id);
         Task<bool> NotificationExists(int id);
         Task<bool> ReadNotification(int id);
     }

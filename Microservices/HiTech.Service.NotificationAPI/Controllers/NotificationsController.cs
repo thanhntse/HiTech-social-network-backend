@@ -55,5 +55,34 @@ namespace HiTech.Service.NotificationAPI.Controllers
             }
             return BadRequest(HiTechApi.ResponseBadRequest());
         }
+
+        // DELETE: api/hitech/notifications/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ApiResponse>> DeleteNotification(int id)
+        {
+            if (!await _notificationService.NotificationExists(id))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            bool success = await _notificationService.DeleteAsync(id);
+            if (success)
+            {
+                return NoContent();
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
+        }
+
+        // DELETE: api/hitech/notifications/user/5
+        [HttpDelete("user/{id}")]
+        public async Task<ActionResult<ApiResponse>> DeleteNotifications(int id)
+        {
+            bool success = await _notificationService.DeleteAllByUserIDAsync(id);
+            if (success)
+            {
+                return NoContent();
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
+        }
     }
 }
