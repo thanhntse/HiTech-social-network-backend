@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using HiTech.RabbitMQ.Publisher;
+using HiTech.Service.PostsAPI.DTOs.Message;
 using HiTech.Service.PostsAPI.DTOs.Response;
 using HiTech.Service.PostsAPI.Entities;
 using HiTech.Service.PostsAPI.Services.IService;
 using HiTech.Service.PostsAPI.UOW;
+using HiTech.Shared.Constant;
 using Microsoft.EntityFrameworkCore;
 
 namespace HiTech.Service.PostsAPI.Services
@@ -12,12 +15,15 @@ namespace HiTech.Service.PostsAPI.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<LikeService> _logger;
+        private readonly IMessagePublisher _messagePublisher;
 
-        public LikeService(ILogger<LikeService> logger, IUnitOfWork unitOfWork, IMapper mapper)
+        public LikeService(ILogger<LikeService> logger, IUnitOfWork unitOfWork, IMapper mapper,
+            IMessagePublisher messagePublisher)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _messagePublisher = messagePublisher;
         }
 
         public async Task<bool> CreateAsync(string authorId, int postId)
@@ -49,6 +55,21 @@ namespace HiTech.Service.PostsAPI.Services
             {
                 _logger.LogError(ex, "An error occurred while creating the like at {Time}.", DateTime.Now);
                 result = false;
+            }
+            if (result)
+            {
+                // Add success => send message
+                var user = await _unitOfWork.Users.GetByIDAsync(like.AuthorId);
+                var post = await _unitOfWork.Posts.GetByIDAsync(like.PostId);
+                // Notification
+                var notification = new NotificationMessage
+                {
+                    Type = NotificationType.LIKE_CREATION,
+                    Content = user?.FullName + NotificationContent.LIKE_CREATION,
+                    UserId = post?.AuthorId
+                };
+                _messagePublisher.Publish(MessageQueueConstants.NOTI_CREATE_QUEUE, notification);
+                _logger.LogInformation("========Create like successfully, notification message sent at {Time}.=========", DateTime.Now);
             }
             return result;
         }

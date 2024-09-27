@@ -2,10 +2,12 @@
 using HiTech.Service.NotificationAPI.Services.IService;
 using HiTech.Service.NotificationAPI.DTOs.Response;
 using HiTech.Shared.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HiTech.Service.NotificationAPI.Controllers
 {
     [Route("api/hitech/notifications")]
+    [Authorize]
     [ApiController]
     public class NotificationsController : ControllerBase
     {
