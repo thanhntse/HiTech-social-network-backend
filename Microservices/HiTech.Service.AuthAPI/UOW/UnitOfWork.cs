@@ -9,6 +9,7 @@ namespace HiTech.Service.AuthAPI.UOW
 
         private readonly AuthDbContext _context;
         public IAccountRepository Accounts { get; private set; }
+        public IAccountInfoRepository AccountInfos { get; private set; }
         public IRefeshTokenRepository RefeshTokens { get; private set; }
         public IExpiredTokenRepository ExpiredTokens { get; private set; }
 
@@ -16,6 +17,7 @@ namespace HiTech.Service.AuthAPI.UOW
         {
             _context = context;
             Accounts = new AccountRepository(context);
+            AccountInfos = new AccountInfoRepository(context);
             RefeshTokens = new RefeshTokenRepository(context);
             ExpiredTokens = new ExpiredTokenRepository(context);
         }

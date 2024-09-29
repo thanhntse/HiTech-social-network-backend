@@ -43,6 +43,7 @@ namespace HiTech.Service.AuthAPI.Services
         {
             var account = _mapper.Map<Account>(request);
             account.Password = PasswordEncoder.Encode(request.Password);
+            account.AccountInfo = new AccountInfo();
 
             Account? response = null;
             try
@@ -112,7 +113,7 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<AccountResponse?> GetByIDAsync(int id)
         {
-            var account = await _unitOfWork.Accounts.GetByIDAsync(id);
+            var account = await _unitOfWork.Accounts.GetDetailInfoByIDAsync(id);
 
             if (account == null)
             {
@@ -137,13 +138,14 @@ namespace HiTech.Service.AuthAPI.Services
         public async Task<bool> UpdateAsync(int id, AccountUpdationRequest request)
         {
             bool result = false;
-            var account = await _unitOfWork.Accounts.GetByIDAsync(id);
+            var account = await _unitOfWork.Accounts.GetDetailInfoByIDAsync(id);
 
             if (account != null)
             {
                 try
                 {
                     _mapper.Map(request, account);
+                    _mapper.Map(request, account.AccountInfo);
 
                     _unitOfWork.Accounts.Update(account);
                     result = await _unitOfWork.SaveAsync() > 0;

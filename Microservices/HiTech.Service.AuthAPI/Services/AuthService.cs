@@ -138,7 +138,7 @@ namespace HiTech.Service.AuthAPI.Services
 
         public async Task<AccountResponse?> GetProfile(string id)
         {
-            var account = await _unitOfWork.Accounts.GetByIDAsync(Int32.Parse(id));
+            var account = await _unitOfWork.Accounts.GetDetailInfoByIDAsync(Int32.Parse(id));
 
             if (account == null)
             {
