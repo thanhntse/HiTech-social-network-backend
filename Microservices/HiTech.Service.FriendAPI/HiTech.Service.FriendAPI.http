@@ -1,0 +1,6 @@
+@HiTech.Service.FriendAPI_HostAddress = http://localhost:5122
+
+GET {{HiTech.Service.FriendAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
