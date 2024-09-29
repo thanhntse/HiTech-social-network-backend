@@ -1,108 +1,130 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HiTech.Service.FriendAPI.Data;
-using HiTech.Service.FriendAPI.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using HiTech.Service.FriendAPI.Services.IService;
+using HiTech.Shared.Controllers;
+using System.Security.Claims;
+using HiTech.Service.FriendAPI.DTOs.Response;
 
 namespace HiTech.Service.FriendAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/hitech/friend-requests")]
+    [Authorize]
     [ApiController]
     public class FriendRequestsController : ControllerBase
     {
-        private readonly FriendDbContext _context;
+        private readonly IFriendRequestService _friendRequestService;
 
-        public FriendRequestsController(FriendDbContext context)
+        public FriendRequestsController(IFriendRequestService friendRequestService)
         {
-            _context = context;
+            _friendRequestService = friendRequestService;
         }
 
-        // GET: api/FriendRequests
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<FriendRequest>>> GetFriendRequests()
+        // POST: api/hitech/friend-requests/accept/5
+        [HttpPost("accept/{id}")]
+        public async Task<ActionResult<ApiResponse>> AcceptFriendRequests(int id)
         {
-            return await _context.FriendRequests.ToListAsync();
-        }
-
-        // GET: api/FriendRequests/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<FriendRequest>> GetFriendRequest(int id)
-        {
-            var friendRequest = await _context.FriendRequests.FindAsync(id);
-
-            if (friendRequest == null)
+            if (!await _friendRequestService.FriendRequestExists(id))
             {
-                return NotFound();
+                return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            return friendRequest;
+            bool success = await _friendRequestService.AcceptRequest(id);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        // PUT: api/FriendRequests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFriendRequest(int id, FriendRequest friendRequest)
+        // POST: api/hitech/friend-requests/5
+        [HttpPost("{receiverId}")]
+        public async Task<ActionResult<ApiResponse>> PostFriendRequest(int receiverId)
         {
-            if (id != friendRequest.FriendRequestId)
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
             {
-                return BadRequest();
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+            var senderId = Int32.Parse(accountId);
+
+            if (senderId == receiverId)
+            {
+                return BadRequest(HiTechApi.ResponseNoData(400, "Cannot request yourself."));
             }
 
-            _context.Entry(friendRequest).State = EntityState.Modified;
-
-            try
+            if (await _friendRequestService.FriendRequestExists(senderId, receiverId))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FriendRequestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(HiTechApi.ResponseNoData(400, "Already request."));
             }
 
-            return NoContent();
+            bool success = await _friendRequestService.CreateAsync(senderId, receiverId);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        // POST: api/FriendRequests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<FriendRequest>> PostFriendRequest(FriendRequest friendRequest)
-        {
-            _context.FriendRequests.Add(friendRequest);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFriendRequest", new { id = friendRequest.FriendRequestId }, friendRequest);
-        }
-
-        // DELETE: api/FriendRequests/5
+        // DELETE: api/hitech/friend-requests/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFriendRequest(int id)
+        public async Task<ActionResult<ApiResponse>> DeleteFriendRequest(int id)
         {
-            var friendRequest = await _context.FriendRequests.FindAsync(id);
-            if (friendRequest == null)
+            if (!await _friendRequestService.FriendRequestExists(id))
             {
-                return NotFound();
+                return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            _context.FriendRequests.Remove(friendRequest);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            bool success = await _friendRequestService.DeleteAsync(id);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        private bool FriendRequestExists(int id)
+        // POST: api/hitech/friend-requests/deny/5
+        [HttpPost("deny/{id}")]
+        public async Task<ActionResult<ApiResponse>> DenyFriendRequests(int id)
         {
-            return _context.FriendRequests.Any(e => e.FriendRequestId == id);
+            if (!await _friendRequestService.FriendRequestExists(id))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            bool success = await _friendRequestService.DenyRequest(id);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
+        }
+
+        // GET: api/hitech/friend-requests/sent
+        [HttpGet("sent")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<FriendRequestResponse>>>> GetAllSentRequests()
+        {
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            var reqs = await _friendRequestService.GetAllSentRequestsAsync(Int32.Parse(accountId));
+            return Ok(HiTechApi.ResponseOk(reqs));
+        }
+
+        // GET: api/hitech/friend-requests/received
+        [HttpGet("received")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<FriendRequestResponse>>>> GetAllReceivedRequests()
+        {
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            var reqs = await _friendRequestService.GetAllReceivedRequestsAsync(Int32.Parse(accountId));
+            return Ok(HiTechApi.ResponseOk(reqs));
         }
     }
 }

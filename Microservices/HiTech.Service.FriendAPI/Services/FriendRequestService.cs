@@ -157,6 +157,12 @@ namespace HiTech.Service.FriendAPI.Services
             return await _unitOfWork.FriendRequests.FriendRequestExists(senderId, receiverId);
         }
 
+        public async Task<bool> FriendRequestExists(int id)
+        {
+            var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
+            return req != null;
+        }
+
         public async Task<IEnumerable<FriendRequestResponse>> GetAllReceivedRequestsAsync(int userId)
         {
             var reqs = await _unitOfWork.FriendRequests.GetAllReceivedRequestsAsync(userId);
@@ -167,16 +173,6 @@ namespace HiTech.Service.FriendAPI.Services
         {
             var reqs = await _unitOfWork.FriendRequests.GetAllSentRequestsAsync(userId);
             return _mapper.Map<IEnumerable<FriendRequestResponse>>(reqs);
-        }
-
-        public async Task<FriendRequestResponse?> GetByIDAsync(int id)
-        {
-            var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
-            if (req == null)
-            {
-                return null;
-            }
-            return _mapper.Map<FriendRequestResponse>(req);
         }
     }
 }
