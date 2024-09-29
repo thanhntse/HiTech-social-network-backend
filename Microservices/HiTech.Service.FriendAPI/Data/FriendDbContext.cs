@@ -31,22 +31,26 @@ namespace HiTech.Service.FriendAPI.Data
             modelBuilder.Entity<FriendRequest>()
                 .HasOne(c => c.Sender)
                 .WithMany(p => p.SentRequests)
-                .HasForeignKey(c => c.SenderId);
+                .HasForeignKey(c => c.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<FriendRequest>()
                 .HasOne(c => c.Receiver)
                 .WithMany(p => p.ReceivedRequests)
-                .HasForeignKey(c => c.ReceiverId);
+                .HasForeignKey(c => c.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Friendship>()
                 .HasOne(c => c.UserSent)
                 .WithMany(p => p.FriendshipsSent)
-                .HasForeignKey(c => c.UserSentId);
+                .HasForeignKey(c => c.UserSentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Friendship>()
                 .HasOne(c => c.UserReceived)
                 .WithMany(p => p.FriendshipsReceived)
-                .HasForeignKey(c => c.UserReceivedId);
+                .HasForeignKey(c => c.UserReceivedId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<FriendRequest>()
                 .ToTable(b =>

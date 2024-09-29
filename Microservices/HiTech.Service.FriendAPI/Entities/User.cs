@@ -16,6 +16,12 @@ namespace HiTech.Service.FriendAPI.Entities
         [Column("avatar")]
         public string? Avatar { get; set; }
 
+        [Column("last_login")]
+        public DateTime? LastLogin { get; set; }
+
+        [Column("is_active")]
+        public bool IsActive { get; set; } = false;
+
         [Column("is_deleted")]
         public bool IsDeleted { get; set; } = false;
 
