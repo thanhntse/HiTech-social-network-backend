@@ -23,11 +23,18 @@ namespace HiTech.Service.AuthAPI.Data
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<AccountInfo> AccountInfos { get; set; }
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<ExpiredToken> ExpiredTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Account>()
+                .HasOne(a => a.AccountInfo)
+                .WithOne(a => a.Account)
+                .HasForeignKey<AccountInfo>(a => a.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<RefreshToken>()
                 .HasOne(rt => rt.Account)
                 .WithMany(a => a.RefreshTokens)

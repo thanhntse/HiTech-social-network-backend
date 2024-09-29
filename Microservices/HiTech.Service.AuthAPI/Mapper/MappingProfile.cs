@@ -12,6 +12,7 @@ namespace HiTech.Service.AuthAPI.Mapper
         {
             CreateMap<AccountCreationRequest, Account>();
             CreateMap<AccountUpdationRequest, Account>();
+            CreateMap<AccountUpdationRequest, AccountInfo>();
             CreateMap<Account, AccountResponse>();
 
             CreateMap<Account, UserMessage>()

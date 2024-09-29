@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace HiTech.Service.AuthAPI.Entities
 {
@@ -23,21 +22,8 @@ namespace HiTech.Service.AuthAPI.Entities
         [MaxLength(50)]
         public string FullName { get; set; } = null!;
 
-        [Column("bio")]
-        public string? Bio { get; set; }
-
-        [Column("phone")]
-        [MaxLength(10)]
-        public string? Phone { get; set; }
-
-        [Column("address")]
-        public string? Address { get; set; }
-
         [Column("avatar")]
         public string? Avatar { get; set; }
-
-        [Column("background")]
-        public string? Background { get; set; }
 
         [Column("created_date")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
@@ -45,13 +31,19 @@ namespace HiTech.Service.AuthAPI.Entities
         [Column("role")]
         public string Role { get; set; } = "Member";
 
+        [Column("last_login")]
+        public DateTime? LastLogin { get; set; }
+
+        [Column("is_active")]
+        public bool IsActive { get; set; } = false;
+
         [Column("is_deleted")]
         public bool IsDeleted { get; set; } = false;
 
-        [JsonIgnore]
+        public virtual AccountInfo AccountInfo { get; set; } = null!;
+
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-        [JsonIgnore]
         public virtual ICollection<ExpiredToken> ExpiredTokens { get; set; } = new List<ExpiredToken>();
     }
 }
