@@ -1,4 +1,5 @@
 using HiTech.RabbitMQ.Consumer;
+using HiTech.RabbitMQ.Publisher;
 using HiTech.Service.FriendAPI.Data;
 using HiTech.Service.FriendAPI.Extensions;
 using HiTech.Service.FriendAPI.Mapper;
@@ -26,6 +27,7 @@ namespace HiTech.Service.FriendAPI
             builder.Services.AddAuthorization();
 
             // Add services to the container.
+            builder.Services.AddSingleton<IMessagePublisher, MessagePublisher>();
             builder.Services.AddSingleton<IMessageConsumer, MessageConsumer>();
             builder.Services.AddHostedService<UserCreateUpdateService>();
             builder.Services.AddHostedService<UserDeleteService>();
