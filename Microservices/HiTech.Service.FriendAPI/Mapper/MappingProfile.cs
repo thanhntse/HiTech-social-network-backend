@@ -10,7 +10,8 @@ namespace HiTech.Service.FriendAPI.Mapper
         {
             CreateMap<FriendRequest, FriendRequestResponse>()
                 .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.Receiver ?? src.Sender));
-            CreateMap<Friendship, FriendshipResponse>();
+            CreateMap<Friendship, FriendshipResponse>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.UserReceived ?? src.UserSent));
 
             CreateMap<User, User>();
             CreateMap<User, UserResponse>();

@@ -33,9 +33,18 @@ namespace HiTech.Service.FriendAPI.Services
             {
                 try
                 {
-                    req.Status = "Accepted";
-                    _unitOfWork.FriendRequests.Update(req);
-                    result = await _unitOfWork.SaveAsync() > 0;
+                    result = await _unitOfWork.SaveWithTransactionAsync(async () =>
+                    {
+                        req.Status = "Accepted";
+                        _unitOfWork.FriendRequests.Update(req);
+
+                        var fship = new Friendship()
+                        {
+                            UserSentId = req.SenderId,
+                            UserReceivedId = req.ReceiverId
+                        };
+                        await _unitOfWork.Friendships.CreateAsync(fship);
+                    }) > 0;
                 }
                 catch (Exception ex)
                 {

@@ -1,108 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HiTech.Service.FriendAPI.Data;
-using HiTech.Service.FriendAPI.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using HiTech.Service.FriendAPI.Services.IService;
+using HiTech.Shared.Controllers;
+using System.Security.Claims;
+using HiTech.Service.FriendAPI.DTOs.Response;
 
 namespace HiTech.Service.FriendAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/hitech/friendships")]
+    [Authorize]
     [ApiController]
     public class FriendshipsController : ControllerBase
     {
-        private readonly FriendDbContext _context;
+        private readonly IFriendshipService _friendshipService;
 
-        public FriendshipsController(FriendDbContext context)
+        public FriendshipsController(IFriendshipService friendshipService)
         {
-            _context = context;
+            _friendshipService = friendshipService;
         }
 
-        // GET: api/Friendships
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Friendship>>> GetFriendships()
-        {
-            return await _context.Friendships.ToListAsync();
-        }
-
-        // GET: api/Friendships/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Friendship>> GetFriendship(int id)
-        {
-            var friendship = await _context.Friendships.FindAsync(id);
-
-            if (friendship == null)
-            {
-                return NotFound();
-            }
-
-            return friendship;
-        }
-
-        // PUT: api/Friendships/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFriendship(int id, Friendship friendship)
-        {
-            if (id != friendship.FriendshipId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(friendship).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FriendshipExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Friendships
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Friendship>> PostFriendship(Friendship friendship)
-        {
-            _context.Friendships.Add(friendship);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFriendship", new { id = friendship.FriendshipId }, friendship);
-        }
-
-        // DELETE: api/Friendships/5
+        // DELETE: api/hitech/friendships/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFriendship(int id)
+        public async Task<ActionResult<ApiResponse>> UnFriend(int id)
         {
-            var friendship = await _context.Friendships.FindAsync(id);
-            if (friendship == null)
+            if (!await _friendshipService.FriendshipExists(id))
             {
-                return NotFound();
+                return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            _context.Friendships.Remove(friendship);
-            await _context.SaveChangesAsync();
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
 
-            return NoContent();
+            bool success = await _friendshipService.DeleteAsync(Int32.Parse(accountId), id);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        private bool FriendshipExists(int id)
+        // GET: api/hitech/friendships/user
+        [HttpGet("user")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<UserResponse>>>> GetFriends()
         {
-            return _context.Friendships.Any(e => e.FriendshipId == id);
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            var friends = await _friendshipService.GetAllFriendAsync(Int32.Parse(accountId));
+            return Ok(HiTechApi.ResponseOk(friends));
+        }
+
+        // GET: api/hitech/friendships/user/detail
+        [HttpGet("user/detail")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<FriendshipResponse>>>> GetDetailFriends()
+        {
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            var friends = await _friendshipService.GetAllFriendDetailAsync(Int32.Parse(accountId));
+            return Ok(HiTechApi.ResponseOk(friends));
+        }
+
+        // PUT: api/hitech/friendships/toggle-block/5
+        [HttpPut("toggle-block/{id}")]
+        public async Task<ActionResult<ApiResponse>> BlockFriend(int id)
+        {
+            if (!await _friendshipService.FriendshipExists(id))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            bool success = await _friendshipService.ToggleBlockAsync(Int32.Parse(accountId), id);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
     }
 }
