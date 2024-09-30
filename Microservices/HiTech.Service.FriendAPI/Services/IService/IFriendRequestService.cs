@@ -7,10 +7,10 @@ namespace HiTech.Service.FriendAPI.Services.IService
         Task<IEnumerable<FriendRequestResponse>> GetAllSentRequestsAsync(int userId);
         Task<IEnumerable<FriendRequestResponse>> GetAllReceivedRequestsAsync(int userId);
         Task<bool> CreateAsync(int senderId, int receiverId);
-        Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(int senderId, int id);
         Task<bool> FriendRequestExists(int id);
         Task<bool> FriendRequestExists(int senderId, int receiverId);
-        Task<bool> AcceptRequest(int id);
-        Task<bool> DenyRequest(int id);
+        Task<bool> AcceptRequest(int receiverId, int id);
+        Task<bool> DenyRequest(int receiverId, int id);
     }
 }

@@ -19,8 +19,8 @@ namespace HiTech.Service.FriendAPI.Controllers
             _friendRequestService = friendRequestService;
         }
 
-        // POST: api/hitech/friend-requests/accept/5
-        [HttpPost("accept/{id}")]
+        // PUT: api/hitech/friend-requests/accept/5
+        [HttpPut("accept/{id}")]
         public async Task<ActionResult<ApiResponse>> AcceptFriendRequests(int id)
         {
             if (!await _friendRequestService.FriendRequestExists(id))
@@ -28,7 +28,13 @@ namespace HiTech.Service.FriendAPI.Controllers
                 return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            bool success = await _friendRequestService.AcceptRequest(id);
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            bool success = await _friendRequestService.AcceptRequest(Int32.Parse(accountId), id);
             if (success)
             {
                 return Ok(HiTechApi.ResponseOk());
@@ -74,7 +80,13 @@ namespace HiTech.Service.FriendAPI.Controllers
                 return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            bool success = await _friendRequestService.DeleteAsync(id);
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            bool success = await _friendRequestService.DeleteAsync(Int32.Parse(accountId), id);
             if (success)
             {
                 return Ok(HiTechApi.ResponseOk());
@@ -82,8 +94,8 @@ namespace HiTech.Service.FriendAPI.Controllers
             return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        // POST: api/hitech/friend-requests/deny/5
-        [HttpPost("deny/{id}")]
+        // PUT: api/hitech/friend-requests/deny/5
+        [HttpPut("deny/{id}")]
         public async Task<ActionResult<ApiResponse>> DenyFriendRequests(int id)
         {
             if (!await _friendRequestService.FriendRequestExists(id))
@@ -91,7 +103,13 @@ namespace HiTech.Service.FriendAPI.Controllers
                 return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            bool success = await _friendRequestService.DenyRequest(id);
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            bool success = await _friendRequestService.DenyRequest(Int32.Parse(accountId), id);
             if (success)
             {
                 return Ok(HiTechApi.ResponseOk());

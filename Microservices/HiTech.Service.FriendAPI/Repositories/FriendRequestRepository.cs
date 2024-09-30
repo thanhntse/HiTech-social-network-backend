@@ -8,7 +8,6 @@ namespace HiTech.Service.FriendAPI.Repositories
 {
     public interface IFriendRequestRepository : IGenericRepository<FriendRequest, int>
     {
-        Task<bool> FriendRequestExists(int senderId, int receiverId);
         Task<IEnumerable<FriendRequest>> GetAllReceivedRequestsAsync(int userId);
         Task<IEnumerable<FriendRequest>> GetAllSentRequestsAsync(int userId);
     }
@@ -19,12 +18,6 @@ namespace HiTech.Service.FriendAPI.Repositories
         public FriendRequestRepository(FriendDbContext context) : base(context)
         {
         }
-
-        public async Task<bool> FriendRequestExists(int senderId, int receiverId)
-            => await _dbSet.AnyAsync(
-                fr => (fr.SenderId == senderId && fr.ReceiverId == receiverId)
-                   || (fr.SenderId == receiverId && fr.ReceiverId == senderId)
-            );
 
         public async Task<IEnumerable<FriendRequest>> GetAllReceivedRequestsAsync(int userId)
             => await _dbSet.Include(fr => fr.Sender)

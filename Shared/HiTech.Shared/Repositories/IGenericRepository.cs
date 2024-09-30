@@ -27,4 +27,6 @@ public interface IGenericRepository<TEntity, TKey>
     IQueryable<TEntity> FindAll(Expression<Func<TEntity, bool>> expression);
 
     ValueTask<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> expression);
+
+    ValueTask<bool> AnyAsync(Expression<Func<TEntity, bool>> expression);
 }

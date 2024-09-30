@@ -25,11 +25,11 @@ namespace HiTech.Service.FriendAPI.Services
             _messagePublisher = messagePublisher;
         }
 
-        public async Task<bool> AcceptRequest(int id)
+        public async Task<bool> AcceptRequest(int receiverId, int id)
         {
             bool result = false;
             var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
-            if (req != null)
+            if (req != null && req.ReceiverId == receiverId)
             {
                 try
                 {
@@ -96,12 +96,12 @@ namespace HiTech.Service.FriendAPI.Services
             return result;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int senderId, int id)
         {
             bool result = false;
             var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
 
-            if (req != null)
+            if (req != null && req.SenderId == senderId)
             {
                 try
                 {
@@ -117,11 +117,11 @@ namespace HiTech.Service.FriendAPI.Services
             return result;
         }
 
-        public async Task<bool> DenyRequest(int id)
+        public async Task<bool> DenyRequest(int receiverId, int id)
         {
             bool result = false;
             var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
-            if (req != null)
+            if (req != null && req.ReceiverId == receiverId)
             {
                 try
                 {
@@ -154,13 +154,15 @@ namespace HiTech.Service.FriendAPI.Services
 
         public async Task<bool> FriendRequestExists(int senderId, int receiverId)
         {
-            return await _unitOfWork.FriendRequests.FriendRequestExists(senderId, receiverId);
+            return await _unitOfWork.FriendRequests.AnyAsync(
+                    fr => (fr.SenderId == senderId && fr.ReceiverId == receiverId)
+                   || (fr.SenderId == receiverId && fr.ReceiverId == senderId)
+                );
         }
 
         public async Task<bool> FriendRequestExists(int id)
         {
-            var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
-            return req != null;
+            return await _unitOfWork.FriendRequests.AnyAsync(fr => fr.FriendRequestId == id);
         }
 
         public async Task<IEnumerable<FriendRequestResponse>> GetAllReceivedRequestsAsync(int userId)

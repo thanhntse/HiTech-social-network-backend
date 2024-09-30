@@ -67,4 +67,7 @@ public abstract class GenericRepository<T, TEntity, TKey> : IGenericRepository<T
     /// <inheritdoc/>
     public virtual async ValueTask<IEnumerable<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> expression)
         => await _dbSet.Where(expression).ToListAsync();
+
+    public virtual async ValueTask<bool> AnyAsync(Expression<Func<TEntity, bool>> expression)
+        => await _dbSet.AnyAsync(expression);
 }
