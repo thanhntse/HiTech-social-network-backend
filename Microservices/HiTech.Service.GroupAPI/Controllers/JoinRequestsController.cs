@@ -1,103 +1,133 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HiTech.Service.GroupAPI.Data;
-using HiTech.Service.GroupAPI.Entities;
+using Microsoft.AspNetCore.Authorization;
+using HiTech.Service.GroupAPI.Services.IService;
+using HiTech.Shared.Controllers;
+using System.Security.Claims;
+using HiTech.Service.GroupAPI.DTOs.Response;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace HiTech.Service.GroupAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/hitech/join-requests")]
+    [Authorize]
     [ApiController]
     public class JoinRequestsController : ControllerBase
     {
-        private readonly GroupDbContext _context;
+        private readonly IJoinRequestService _joinRequestService;
+        private readonly IGroupService _groupService;
 
-        public JoinRequestsController(GroupDbContext context)
+        public JoinRequestsController(IJoinRequestService joinRequestService, IGroupService groupService)
         {
-            _context = context;
+            _joinRequestService = joinRequestService;
+            _groupService = groupService;
         }
 
-        // GET: api/JoinRequests
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<JoinRequest>>> GetJoinRequests()
+        // PUT: api/hitech/join-requests/accept/5
+        [HttpPut("accept/{reqId}")]
+        public async Task<ActionResult<ApiResponse>> AcceptJoinRequests(int reqId)
         {
-            return await _context.JoinRequests.ToListAsync();
-        }
-
-        // GET: api/JoinRequests/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<JoinRequest>> GetJoinRequest(int id)
-        {
-            var joinRequest = await _context.JoinRequests.FindAsync(id);
-
-            if (joinRequest == null)
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
             {
-                return NotFound();
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+            var founderId = Int32.Parse(accountId);
+
+            if (!await _joinRequestService.JoinRequestExists(reqId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            return joinRequest;
+            bool success = await _joinRequestService.AcceptRequest(founderId, reqId);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        // PUT: api/JoinRequests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutJoinRequest(int id, JoinRequest joinRequest)
+        // POST: api/hitech/join-requests/5
+        [HttpPost("{groupId}")]
+        public async Task<ActionResult<ApiResponse>> PostJoinRequest(int groupId)
         {
-            if (id != joinRequest.JoinRequestId)
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
             {
-                return BadRequest();
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+            var userId = Int32.Parse(accountId);
+
+            if (await _groupService.UserExistsInGroup(userId, groupId) ||
+                await _joinRequestService.JoinRequestExists(userId, groupId))
+            {
+                return BadRequest(HiTechApi.ResponseNoData(400, "Already request."));
             }
 
-            _context.Entry(joinRequest).State = EntityState.Modified;
-
-            try
+            if (!await _groupService.GroupExists(groupId))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!JoinRequestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            return NoContent();
+            bool success = await _joinRequestService.CreateAsync(userId, groupId);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        // POST: api/JoinRequests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<JoinRequest>> PostJoinRequest(JoinRequest joinRequest)
+        // DELETE: api/hitech/join-requests/5
+        [HttpDelete("{reqId}")]
+        public async Task<ActionResult<ApiResponse>> DeleteJoinRequest(int reqId)
         {
-            _context.JoinRequests.Add(joinRequest);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetJoinRequest", new { id = joinRequest.JoinRequestId }, joinRequest);
-        }
-
-        // DELETE: api/JoinRequests/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteJoinRequest(int id)
-        {
-            var joinRequest = await _context.JoinRequests.FindAsync(id);
-            if (joinRequest == null)
+            if (!await _joinRequestService.JoinRequestExists(reqId))
             {
-                return NotFound();
+                return NotFound(HiTechApi.ResponseNotFound());
             }
 
-            _context.JoinRequests.Remove(joinRequest);
-            await _context.SaveChangesAsync();
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
 
-            return NoContent();
+            bool success = await _joinRequestService.DeleteAsync(Int32.Parse(accountId), reqId);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        private bool JoinRequestExists(int id)
+        // PUT: api/hitech/join-requests/deny/5
+        [HttpPut("deny/{reqId}")]
+        public async Task<ActionResult<ApiResponse>> DenyJoinRequests(int reqId)
         {
-            return _context.JoinRequests.Any(e => e.JoinRequestId == id);
+            if (!await _joinRequestService.JoinRequestExists(reqId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            bool success = await _joinRequestService.DenyRequest(Int32.Parse(accountId), reqId);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
+        }
+
+        // GET: api/hitech/join-requests/group/5
+        [HttpGet("group/{groupId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<JoinRequestResponse>>>> GetJoinRequests(int groupId)
+        {
+            var reqs = await _joinRequestService.GetAllByGroupIDAsync(groupId);
+            return Ok(HiTechApi.ResponseOk(reqs));
         }
     }
 }
