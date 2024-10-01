@@ -11,12 +11,14 @@ namespace HiTech.Service.GroupAPI.UOW
         public IGroupRepository Groups { get; private set; }
         public IGroupUserRepository GroupUsers { get; private set; }
         public IUserRepository Users { get; private set; }
+        public IJoinRequestRepository JoinRequests { get; private set; }
         public UnitOfWork(GroupDbContext context)
         {
             _context = context;
             Groups = new GroupRepository(context);
             GroupUsers = new GroupUserRepository(context);
             Users = new UserRepository(context);
+            JoinRequests = new JoinRequestRepository(context);
         }
 
         public async Task<int> SaveAsync()

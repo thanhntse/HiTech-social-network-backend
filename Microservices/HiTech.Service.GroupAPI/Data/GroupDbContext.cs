@@ -13,6 +13,7 @@ namespace HiTech.Service.GroupAPI.Data
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<GroupUser> GroupUsers { get; set; }
+        public virtual DbSet<JoinRequest> JoinRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,18 @@ namespace HiTech.Service.GroupAPI.Data
                 .HasOne(g => g.Founder)
                 .WithMany(f => f.MyGroups)
                 .HasForeignKey(f => f.FounderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<JoinRequest>()
+                .HasOne(g => g.Group)
+                .WithMany(f => f.JoinRequests)
+                .HasForeignKey(f => f.GroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<JoinRequest>()
+                .HasOne(g => g.User)
+                .WithMany(f => f.JoinRequests)
+                .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

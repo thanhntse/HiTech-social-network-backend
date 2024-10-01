@@ -7,6 +7,7 @@ namespace HiTech.Service.GroupAPI.UOW
         IGroupRepository Groups { get; }
         IGroupUserRepository GroupUsers { get; }
         IUserRepository Users { get; }
+        IJoinRequestRepository JoinRequests { get; }
         Task<int> SaveAsync();
         Task<int> SaveWithTransactionAsync();
         Task<int> SaveWithTransactionAsync(Func<Task> operation);

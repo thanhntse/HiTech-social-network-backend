@@ -27,5 +27,7 @@ namespace HiTech.Service.GroupAPI.Entities
         public virtual User Founder { get; set; } = null!;
 
         public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+        public virtual ICollection<JoinRequest> JoinRequests { get; set; } = new List<JoinRequest>();
     }
 }

@@ -37,6 +37,7 @@ namespace HiTech.Service.GroupAPI
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddScoped<IGroupService, GroupService>();
+            builder.Services.AddScoped<IJoinRequestService, JoinRequestService>();
 
             builder.Services.AddControllers();
 

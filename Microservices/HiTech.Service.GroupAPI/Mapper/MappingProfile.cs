@@ -12,6 +12,8 @@ namespace HiTech.Service.GroupAPI.Mapper
             CreateMap<GroupRequest, Group>();
             CreateMap<Group, GroupResponse>();
 
+            CreateMap<JoinRequest, JoinRequestResponse>();
+
             CreateMap<User, User>();
             CreateMap<User, UserResponse>();
         }

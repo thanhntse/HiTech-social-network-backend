@@ -28,5 +28,7 @@ namespace HiTech.Service.GroupAPI.Entities
         public virtual ICollection<Group> MyGroups { get; set; } = new List<Group>();
 
         public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+        public virtual ICollection<JoinRequest> JoinRequests { get; set; } = new List<JoinRequest>();
     }
 }
