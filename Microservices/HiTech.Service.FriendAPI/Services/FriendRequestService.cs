@@ -29,7 +29,7 @@ namespace HiTech.Service.FriendAPI.Services
         {
             bool result = false;
             var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
-            if (req != null && req.ReceiverId == receiverId)
+            if (req != null && req.Status == "Pending" && req.ReceiverId == receiverId)
             {
                 try
                 {
@@ -130,7 +130,7 @@ namespace HiTech.Service.FriendAPI.Services
         {
             bool result = false;
             var req = await _unitOfWork.FriendRequests.GetByIDAsync(id);
-            if (req != null && req.ReceiverId == receiverId)
+            if (req != null && req.Status == "Pending" && req.ReceiverId == receiverId)
             {
                 try
                 {
