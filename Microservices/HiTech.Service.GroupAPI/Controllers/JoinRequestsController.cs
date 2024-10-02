@@ -4,7 +4,6 @@ using HiTech.Service.GroupAPI.Services.IService;
 using HiTech.Shared.Controllers;
 using System.Security.Claims;
 using HiTech.Service.GroupAPI.DTOs.Response;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace HiTech.Service.GroupAPI.Controllers
 {
@@ -122,11 +121,53 @@ namespace HiTech.Service.GroupAPI.Controllers
             return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
-        // GET: api/hitech/join-requests/group/5
-        [HttpGet("group/{groupId}")]
+        // GET: api/hitech/join-requests/group/all/5
+        [HttpGet("group/all/{groupId}")]
         public async Task<ActionResult<ApiResponse<IEnumerable<JoinRequestResponse>>>> GetJoinRequests(int groupId)
         {
+            if (!await _groupService.GroupExists(groupId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+            var fouderId = Int32.Parse(accountId);
+
+            if (!await _groupService.IsFounder(fouderId, groupId))
+            {
+                return Forbid();
+            }
+
             var reqs = await _joinRequestService.GetAllByGroupIDAsync(groupId);
+            return Ok(HiTechApi.ResponseOk(reqs));
+        }
+
+        // GET: api/hitech/join-requests/group/pending/5
+        [HttpGet("group/pending/{groupId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<JoinRequestResponse>>>> GetPendingJoinRequests(int groupId)
+        {
+            if (!await _groupService.GroupExists(groupId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+            var fouderId = Int32.Parse(accountId);
+
+            if (!await _groupService.IsFounder(fouderId, groupId))
+            {
+                return Forbid();
+            }
+
+            var reqs = await _joinRequestService.GetAllPendingRequestByGroupIDAsync(groupId);
             return Ok(HiTechApi.ResponseOk(reqs));
         }
     }

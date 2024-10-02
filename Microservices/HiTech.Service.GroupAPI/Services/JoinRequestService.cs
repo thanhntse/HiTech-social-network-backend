@@ -6,6 +6,7 @@ using HiTech.Service.GroupAPI.Entities;
 using HiTech.Service.GroupAPI.Services.IService;
 using HiTech.Service.GroupAPI.UOW;
 using HiTech.Shared.Constant;
+using Microsoft.EntityFrameworkCore;
 
 namespace HiTech.Service.GroupAPI.Services
 {
@@ -162,7 +163,18 @@ namespace HiTech.Service.GroupAPI.Services
 
         public async Task<IEnumerable<JoinRequestResponse>> GetAllByGroupIDAsync(int groupId)
         {
-            var reqs = await _unitOfWork.JoinRequests.FindAllAsync(i => i.GroupId == groupId);
+            var reqs = await _unitOfWork.JoinRequests.FindAll(i => i.GroupId == groupId)
+                                                     .Include(i => i.User)
+                                                     .ToListAsync();
+            return _mapper.Map<IEnumerable<JoinRequestResponse>>(reqs);
+        }
+
+        public async Task<IEnumerable<JoinRequestResponse>> GetAllPendingRequestByGroupIDAsync(int groupId)
+        {
+            var reqs = await _unitOfWork.JoinRequests.FindAll(i => i.GroupId == groupId
+                                                           && i.Status == "Pending")
+                                                     .Include(i => i.User)
+                                                     .ToListAsync();
             return _mapper.Map<IEnumerable<JoinRequestResponse>>(reqs);
         }
 

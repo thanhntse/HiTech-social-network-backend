@@ -5,6 +5,7 @@ namespace HiTech.Service.GroupAPI.Services.IService
     public interface IJoinRequestService
     {
         Task<IEnumerable<JoinRequestResponse>> GetAllByGroupIDAsync(int groupId);
+        Task<IEnumerable<JoinRequestResponse>> GetAllPendingRequestByGroupIDAsync(int groupId);
         Task<bool> CreateAsync(int userId, int groupId);
         Task<bool> DeleteAsync(int userId, int reqId);
         Task<bool> JoinRequestExists(int reqId);
