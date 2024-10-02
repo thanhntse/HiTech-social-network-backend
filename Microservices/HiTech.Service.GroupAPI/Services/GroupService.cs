@@ -34,8 +34,17 @@ namespace HiTech.Service.GroupAPI.Services
 
             try
             {
-                var result = await _unitOfWork.Groups.CreateAsync(group);
-                await _unitOfWork.SaveAsync();
+                Group? result = null;
+                await _unitOfWork.SaveWithTransactionAsync(async () =>
+                {
+                    var founder = await _unitOfWork.Users.GetByIDAsync(founderId);
+
+                    if (founder != null)
+                    {
+                        group.Users.Add(founder);
+                    }
+                    result = await _unitOfWork.Groups.CreateAsync(group);
+                });
                 return _mapper.Map<GroupResponse>(result);
             }
             catch (Exception ex)
@@ -75,6 +84,12 @@ namespace HiTech.Service.GroupAPI.Services
         {
             var groups = await _unitOfWork.Users.GetAllGroupByUserIDAsync(userId);
             return _mapper.Map<IEnumerable<GroupResponse>>(groups);
+        }
+
+        public async Task<IEnumerable<UserResponse>> GetAllUserByGroupIDAsync(int groupId)
+        {
+            var users = await _unitOfWork.Groups.GetAllUserByGroupIDAsync(groupId);
+            return _mapper.Map<IEnumerable<UserResponse>>(users);
         }
 
         public async Task<GroupResponse?> GetByIDAsync(int groupId)
@@ -132,6 +147,30 @@ namespace HiTech.Service.GroupAPI.Services
                 };
                 _messagePublisher.Publish(MessageQueueConstants.NOTI_CREATE_QUEUE, notification);
                 _logger.LogInformation("========Kick user successfully, notification message sent at {Time}.=========", DateTime.Now);
+            }
+            return result;
+        }
+
+        public async Task<bool> OutGroup(int groupId, int userId)
+        {
+            bool result = false;
+            var groupUser = await _unitOfWork.GroupUsers.FindAll(
+                           gu => gu.GroupId == groupId
+                           && gu.UserId == userId
+                       ).FirstOrDefaultAsync();
+
+            if (groupUser != null)
+            {
+                try
+                {
+                    _unitOfWork.GroupUsers.Delete(groupUser);
+                    result = await _unitOfWork.SaveAsync() > 0;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while out a group at {Time}.", DateTime.Now);
+                    result = false;
+                }
             }
             return result;
         }

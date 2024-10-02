@@ -9,6 +9,7 @@ namespace HiTech.Service.GroupAPI.Repositories
     public interface IGroupRepository : IGenericRepository<Group, int>
     {
         Task<Group?> GetDetailByIDAsync(int id);
+        Task<IEnumerable<User>> GetAllUserByGroupIDAsync(int id);
     }
 
     public sealed class GroupRepository
@@ -17,6 +18,12 @@ namespace HiTech.Service.GroupAPI.Repositories
         public GroupRepository(GroupDbContext context) : base(context)
         {
         }
+
+        public async Task<IEnumerable<User>> GetAllUserByGroupIDAsync(int id)
+            => await _dbSet.Where(g => g.GroupId == id)
+                                    .Include(g => g.Users)
+                                    .Select(g => g.Users)
+                                    .FirstOrDefaultAsync() ?? [];
 
         public async Task<Group?> GetDetailByIDAsync(int id)
             => await _dbSet.Include(i => i.Founder)

@@ -37,13 +37,18 @@ namespace HiTech.Service.GroupAPI.Controllers
             }
             var response = HiTechApi.Response(201, "Created.", group);
             return CreatedAtAction("GetGroup",
-                new { id = response?.Data?.GroupId }, response);
+                new { groupId = response?.Data?.GroupId }, response);
         }
 
         // DELETE: api/hitech/groups/5
         [HttpDelete("{groupId}")]
         public async Task<ActionResult<ApiResponse>> DeleteGroup(int groupId)
         {
+            if (!await _groupService.GroupExists(groupId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
             var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (accountId == null)
             {
@@ -54,11 +59,6 @@ namespace HiTech.Service.GroupAPI.Controllers
             if (!await _groupService.IsFounder(founderId, groupId))
             {
                 return Forbid();
-            }
-
-            if (!await _groupService.GroupExists(groupId))
-            {
-                return NotFound(HiTechApi.ResponseNotFound());
             }
 
             bool success = await _groupService.DeleteAsync(groupId);
@@ -89,18 +89,37 @@ namespace HiTech.Service.GroupAPI.Controllers
             return Ok(HiTechApi.ResponseOk(group));
         }
 
-        // GET: api/hitech/groups/user/5
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<GroupResponse>>>> GetGroupsOfUser(int userId)
+        // GET: api/hitech/groups/of-user
+        [HttpGet("of-user")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<GroupResponse>>>> GetGroupsOfUser()
         {
-            var groups = await _groupService.GetAllByUserIDAsync(userId);
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+
+            var groups = await _groupService.GetAllByUserIDAsync(Int32.Parse(accountId));
             return Ok(HiTechApi.ResponseOk(groups));
         }
 
-        // DELETE: api/hitech/groups/user/5
-        [HttpDelete("user/{userId}")]
-        public async Task<ActionResult<ApiResponse>> KickUser(int userId, int groupId)
+        // GET: api/hitech/groups/all-user
+        [HttpGet("all-user/{groupId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<UserResponse>>>> GetAllUserOfGroup(int groupId)
         {
+            var users = await _groupService.GetAllUserByGroupIDAsync(groupId);
+            return Ok(HiTechApi.ResponseOk(users));
+        }
+
+        // DELETE: api/hitech/groups/kick-user/5
+        [HttpDelete("kick-user/{groupId}")]
+        public async Task<ActionResult<ApiResponse>> KickUser(int groupId, int userId)
+        {
+            if (!await _groupService.GroupExists(groupId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
             var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (accountId == null)
             {
@@ -111,11 +130,6 @@ namespace HiTech.Service.GroupAPI.Controllers
             if (!await _groupService.IsFounder(founderId, groupId))
             {
                 return Forbid();
-            }
-
-            if (!await _groupService.GroupExists(groupId))
-            {
-                return NotFound(HiTechApi.ResponseNotFound());
             }
 
             if (!await _groupService.UserExistsInGroup(userId, groupId))
@@ -131,10 +145,44 @@ namespace HiTech.Service.GroupAPI.Controllers
             return BadRequest(HiTechApi.ResponseBadRequest());
         }
 
+        // DELETE: api/hitech/groups/out/5
+        [HttpDelete("out/{groupId}")]
+        public async Task<ActionResult<ApiResponse>> OutGroup(int groupId)
+        {
+            if (!await _groupService.GroupExists(groupId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
+            var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (accountId == null)
+            {
+                return Unauthorized(HiTechApi.ResponseUnauthorized());
+            }
+            var userId = Int32.Parse(accountId);
+
+            if (!await _groupService.UserExistsInGroup(userId, groupId))
+            {
+                return NotFound(HiTechApi.ResponseNoData(400, "User not exist in group"));
+            }
+
+            bool success = await _groupService.OutGroup(groupId, userId);
+            if (success)
+            {
+                return Ok(HiTechApi.ResponseOk());
+            }
+            return BadRequest(HiTechApi.ResponseBadRequest());
+        }
+
         // PUT: api/hitech/groups/5
         [HttpPut("{groupId}")]
         public async Task<ActionResult<ApiResponse>> PutGroup(int groupId, GroupRequest request)
         {
+            if (!await _groupService.GroupExists(groupId))
+            {
+                return NotFound(HiTechApi.ResponseNotFound());
+            }
+
             var accountId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (accountId == null)
             {
@@ -145,11 +193,6 @@ namespace HiTech.Service.GroupAPI.Controllers
             if (!await _groupService.IsFounder(founderId, groupId))
             {
                 return Forbid();
-            }
-
-            if (!await _groupService.GroupExists(groupId))
-            {
-                return NotFound(HiTechApi.ResponseNotFound());
             }
 
             bool success = await _groupService.UpdateAsync(groupId, request);
