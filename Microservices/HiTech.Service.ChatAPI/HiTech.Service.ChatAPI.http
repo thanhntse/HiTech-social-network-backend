@@ -1,6 +1,0 @@
-@HiTech.Service.ChatAPI_HostAddress = http://localhost:5176
-
-GET {{HiTech.Service.ChatAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
