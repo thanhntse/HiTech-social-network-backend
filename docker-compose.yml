@@ -1,0 +1,76 @@
+version: '3.9'
+
+networks:
+  backend: 
+
+services:
+  hitech.yarp:
+    container_name: hitech-yarp
+    image: ${DOCKER_REGISTRY-}hitechyarp
+    build:
+      context: .
+      dockerfile: Gateway/HiTech.Yarp/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8080:8080
+
+
+  hitech.service.authapi:
+    container_name: hitech-service-authapi
+    image: ${DOCKER_REGISTRY-}hitechserviceauthapi
+    build:
+      context: .
+      dockerfile: Microservices/HiTech.Service.AuthAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8001:8080
+
+
+  hitech.service.postsapi:
+    container_name: hitech-service-postsapi
+    image: ${DOCKER_REGISTRY-}hitechservicepostsapi
+    build:
+      context: .
+      dockerfile: Microservices/HiTech.Service.PostsAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:8080
+
+
+  hitech.service.notificationapi:
+    container_name: hitech-service-notificationapi
+    image: ${DOCKER_REGISTRY-}hitechservicenotificationapi
+    build:
+      context: .
+      dockerfile: Microservices/HiTech.Service.NotificationAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8003:8080
+
+
+  hitech.service.friendapi:
+    container_name: hitech-service-friendapi
+    image: ${DOCKER_REGISTRY-}hitechservicefriendapi
+    build:
+      context: .
+      dockerfile: Microservices/HiTech.Service.FriendAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8004:8080
+
+
+  hitech.service.groupapi:
+    container_name: hitech-service-groupapi
+    image: ${DOCKER_REGISTRY-}hitechservicegroupapi
+    build:
+      context: .
+      dockerfile: Microservices/HiTech.Service.GroupAPI/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8005:8080

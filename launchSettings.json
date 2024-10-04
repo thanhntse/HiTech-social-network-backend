@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "hitech.yarp": "StartDebugging",
+        "hitech.service.authapi": "StartDebugging",
+        "hitech.service.friendapi": "StartDebugging",
+        "hitech.service.groupapi": "StartDebugging",
+        "hitech.service.notificationapi": "StartDebugging",
+        "hitech.service.postsapi": "StartDebugging"
+      }
+    }
+  }
+}
