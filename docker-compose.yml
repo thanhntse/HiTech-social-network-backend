@@ -1,7 +1,8 @@
-version: '3.9'
+version: '3.8'
 
 networks:
-  backend: 
+  backend:
+    driver: bridge
 
 services:
   hitech.yarp:
@@ -14,6 +15,7 @@ services:
       - backend
     ports:
       - 8080:8080
+      - 9090:8081 
 
 
   hitech.service.authapi:
@@ -26,6 +28,7 @@ services:
       - backend
     ports:
       - 8001:8080
+      - 9001:8081
 
 
   hitech.service.postsapi:
@@ -38,6 +41,7 @@ services:
       - backend
     ports:
       - 8002:8080
+      - 9002:8081 
 
 
   hitech.service.notificationapi:
@@ -50,6 +54,7 @@ services:
       - backend
     ports:
       - 8003:8080
+      - 9003:8081 
 
 
   hitech.service.friendapi:
@@ -62,6 +67,7 @@ services:
       - backend
     ports:
       - 8004:8080
+      - 9004:8081 
 
 
   hitech.service.groupapi:
@@ -74,3 +80,4 @@ services:
       - backend
     ports:
       - 8005:8080
+      - 9005:8081 
