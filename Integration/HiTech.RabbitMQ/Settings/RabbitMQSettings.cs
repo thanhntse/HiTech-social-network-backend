@@ -2,7 +2,7 @@
 {
     public static class RabbitMQSettings
     {
-        public const string HostName = "localhost";
+        public const string HostName = "host.docker.internal";
         public const string UserName = "guest";
         public const string Password = "guest";
         public const string VirtualHost = "/";

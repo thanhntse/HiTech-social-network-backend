@@ -39,7 +39,7 @@ namespace HiTech.Service.NotificationAPI
 
             builder.Services.AddHttpClient("HiTech", client =>
             {
-                client.BaseAddress = new Uri("http://localhost:8001/api/hitech/");
+                client.BaseAddress = new Uri("http://host.docker.internal:8001/api/hitech/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
