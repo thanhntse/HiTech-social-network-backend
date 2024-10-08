@@ -35,10 +35,3 @@ HiTech Social Network is a social networking platform. The frontend is built usi
 7. **Friends and Following**
    - Send friend requests and follow other users.
    - Display friends and followers lists.
-
-## Tech Stack
-
-**Backend:**
-- [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
-- Microservices architecture
-- Docker for containerization
