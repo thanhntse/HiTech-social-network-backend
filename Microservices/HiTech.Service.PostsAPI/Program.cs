@@ -44,7 +44,7 @@ namespace HiTech.Service.PostsAPI
 
             builder.Services.AddHttpClient("HiTech", client =>
             {
-                client.BaseAddress = new Uri("http://host.docker.internal:8001/api/hitech/");
+                client.BaseAddress = new Uri("https://host.docker.internal:9001/api/hitech/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
