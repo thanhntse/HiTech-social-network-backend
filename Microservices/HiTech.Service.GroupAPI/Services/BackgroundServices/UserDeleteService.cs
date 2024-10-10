@@ -21,7 +21,7 @@ namespace HiTech.Service.GroupAPI.Services.BackgroundServices
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _messageConsumer.CreateConsumer(MessageQueueConstants.USER_DELETE_QUEUE, async (model, ea) =>
+            _messageConsumer.CreateConsumer(MessageQueueConstants.GROUPSVC_USER_DELETE_QUEUE, async (model, ea) =>
             {
                 _logger.LogInformation("========Message received at {Time}.========", DateTime.Now);
                 try

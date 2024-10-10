@@ -59,7 +59,9 @@ namespace HiTech.Service.AuthAPI.Services
             // Add success => send message
             // User message
             var message = _mapper.Map<UserMessage>(response);
-            _messagePublisher.Publish(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, message);
+            _messagePublisher.Publish(MessageQueueConstants.POSTSVC_USER_CREATE_UPDATE_QUEUE, message);
+            _messagePublisher.Publish(MessageQueueConstants.FRIENDSVC_USER_CREATE_UPDATE_QUEUE, message);
+            _messagePublisher.Publish(MessageQueueConstants.GROUPSVC_USER_CREATE_UPDATE_QUEUE, message);
             _logger.LogInformation("========Create account successfully, user message sent at {Time}.=========", DateTime.Now);
 
             // Notification
@@ -98,7 +100,9 @@ namespace HiTech.Service.AuthAPI.Services
             if (result)
             {
                 // Delete success => send message
-                _messagePublisher.Publish(MessageQueueConstants.USER_DELETE_QUEUE, id);
+                _messagePublisher.Publish(MessageQueueConstants.POSTSVC_USER_DELETE_QUEUE, id);
+                _messagePublisher.Publish(MessageQueueConstants.FRIENDSVC_USER_DELETE_QUEUE, id);
+                _messagePublisher.Publish(MessageQueueConstants.GROUPSVC_USER_DELETE_QUEUE, id);
                 _logger.LogInformation("========Delete account successfully, user message sent at {Time}.========", DateTime.Now);
             }
             // Return to controller
@@ -161,7 +165,9 @@ namespace HiTech.Service.AuthAPI.Services
             {
                 // Update success => send message
                 var message = _mapper.Map<UserMessage>(account);
-                _messagePublisher.Publish(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, message);
+                _messagePublisher.Publish(MessageQueueConstants.POSTSVC_USER_CREATE_UPDATE_QUEUE, message);
+                _messagePublisher.Publish(MessageQueueConstants.FRIENDSVC_USER_CREATE_UPDATE_QUEUE, message);
+                _messagePublisher.Publish(MessageQueueConstants.GROUPSVC_USER_CREATE_UPDATE_QUEUE, message);
                 _logger.LogInformation("========Update account successfully, user message sent at {Time}.========", DateTime.Now);
             }
             // Return to controller

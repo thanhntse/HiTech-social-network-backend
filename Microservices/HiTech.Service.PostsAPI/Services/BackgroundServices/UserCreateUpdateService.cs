@@ -26,7 +26,7 @@ namespace HiTech.Service.PostsAPI.Services.BackgroundServices
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _messageConsumer.CreateConsumer(MessageQueueConstants.USER_CREATE_UPDATE_QUEUE, async (model, ea) =>
+            _messageConsumer.CreateConsumer(MessageQueueConstants.POSTSVC_USER_CREATE_UPDATE_QUEUE, async (model, ea) =>
             {
                 _logger.LogInformation("========Message received at {Time}.========", DateTime.Now);
                 try
